@@ -19,10 +19,15 @@
 
     <!-- LANGUAGES menu-->
     <md-menu>
-        <md-button class="md-icon-button" aria-label="language" ng-click="$mdOpenMenu()">
-            <md-icon md-font-icon="zmdi zmdi-globe-alt
-            "></md-icon>
+        <md-button class="md-icon-button"
+                   aria-label="language"
+                   ng-click="$mdOpenMenu()">
+
+            <md-icon md-font-icon="zmdi zmdi-globe-alt">
+            </md-icon>
+
         </md-button>
+
         <md-menu-content width="3">
             <md-menu-item ng-repeat="language in ::vm.languages">
 
@@ -65,7 +70,7 @@
                    ng-click="$mdOpenMenu()">
             <img class="toolbar-user-avatar"
                  src="assets/images/avatars/avatar-5.png">
-            Georgia <!-- {{userProfile.name}} -->
+             {{userProfile.name}}
         </md-button>
 
         <md-menu-content width="4">
@@ -97,7 +102,9 @@
             <md-menu-divider></md-menu-divider>
 
             <md-menu-item>
-                <md-button href="#/login" aria-label="side navigation">
+                <!-- authentication.logout does nothing - just calls the LogoutController ui-sref='authentication.logout' -->
+                <md-button ui-sref='authentication.logout'
+                           aria-label="side navigation">
 
                     <md-icon md-font-icon="zmdi zmdi-sign-in">
                     </md-icon>

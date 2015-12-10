@@ -21,7 +21,16 @@
                 controller: 'AuthenticationController'
             })
             .state('authentication.home', {
-
+                //templateUrl: 'templates/components/layout/welcome-to-app.tmpl.html'
+            })
+            .state('authentication.logout', {
+                controller: 'LogoutController',
+                controllerAs: 'vm'
+            })
+            .state('authentication.profile', {
+                templateUrl: 'templates/components/authentication/profile.tmpl.html',
+                controller: 'ProfileController',
+                controllerAs: 'vm'
             })
             .state('authentication.login', {
                 templateUrl: 'templates/components/authentication/login.tmpl.html',

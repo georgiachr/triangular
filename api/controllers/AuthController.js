@@ -1,10 +1,22 @@
 /**
  * Created by georgia.chr on 14-Sep-15.
  * Authenticate / Login users
+ *
+ * @module AuthControllers
+ * @author Georgia Christodoulou
+ * @version 1.0.0
+ * @summary Hello Georgia
+ * {@link FileController}
  */
 
 module.exports = {
 
+  /**
+   *
+   * @param req {object} http request. Data are coming as a json structure
+   * @param res
+   * @returns {*}
+   */
   authenticate: function(req, res) {
 
     var email = req.param('email');

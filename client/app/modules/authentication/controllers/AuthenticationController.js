@@ -17,6 +17,7 @@
         $scope.useridentity = useridentity;
         vm.checkUserToken = checkUserToken;
 
+
         function checkUserToken(){
 
             console.log("user's role = " + $scope.useridentity.userRole);

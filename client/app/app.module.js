@@ -1,3 +1,6 @@
+/**
+ * @module hi
+ */
 (function() {
     'use strict';
 

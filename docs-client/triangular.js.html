@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: triangular.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: triangular.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>(function() {
+    'use strict';
+
+    angular
+        .module('triangular', [
+            'ngMaterial',
+            'triangular.layouts', 'triangular.components', 'triangular.themes', 'triangular.directives',
+            // 'triangular.profiler',
+            // uncomment above to activate the speed profiler
+            'ui.router'
+        ]);
+})();
+
+angular.module("triangular").run(["$templateCache", function($templateCache) {$templateCache.put("app/triangular/components/footer/footer.tmpl.html","&lt;md-toolbar id=\"footer\" md-theme=\"{{triSkin.elements.toolbar}}\" ng-controller=\"FooterController as vm\" ng-show=\"vm.layout.footer\">&lt;div class=\"md-toolbar-tools md-body-1\" layout=\"row\" layout-align=\"space-between center\">&lt;h2>{{vm.name}}&lt;/h2>&lt;h2 hide-sm=\"\" ng-bind-html=\"vm.copyright\">&lt;/h2>&lt;h2>v{{vm.version}}&lt;/h2>&lt;/div>&lt;/md-toolbar>");
+$templateCache.put("app/triangular/components/menu/menu-item-divider.tmpl.html","&lt;md-divider>&lt;/md-divider>");
+$templateCache.put("app/triangular/components/menu/menu-item-dropdown.tmpl.html","&lt;md-button ng-click=\"triMenuItem.toggleDropdownMenu()\" class=\"md-raised md-primary side-menu-link\">&lt;md-icon ng-if=\"::(triMenuItem.item.icon !== undefined)\" class=\"side-menu-icon\" md-font-icon=\"{{::triMenuItem.item.icon}}\">&lt;/md-icon>&lt;span translate=\"\">{{::triMenuItem.item.name}}&lt;/span>&lt;md-icon class=\"menu-toggle-icon\" md-font-icon=\"zmdi zmdi-chevron-right\" ng-class=\"{ open: triMenuItem.item.open }\">&lt;/md-icon>&lt;/md-button>&lt;ul class=\"drop-down-list\" ng-show=\"triMenuItem.item.open\">&lt;li ng-repeat=\"child in triMenuItem.item.children\">&lt;tri-menu-item item=\"::child\">&lt;/tri-menu-item>&lt;/li>&lt;/ul>");
+$templateCache.put("app/triangular/components/menu/menu-item-link.tmpl.html","&lt;md-button ng-click=\"triMenuItem.openLink(triMenuItem.item)\" class=\"md-primary md-raised side-menu-link\" ng-class=\"{ \'md-hue-1\': triMenuItem.item.active }\">&lt;md-icon ng-if=\"::(triMenuItem.item.icon !== undefined)\" class=\"side-menu-icon\" md-font-icon=\"{{::triMenuItem.item.icon}}\">&lt;/md-icon>&lt;span translate=\"\">{{::triMenuItem.item.name}}&lt;/span> &lt;small ng-if=\"triMenuItem.item.badge\" theme-background=\"accent\" class=\"side-menu-badge\">{{::triMenuItem.item.badge}}&lt;/small>&lt;/md-button>");
+$templateCache.put("app/triangular/components/menu/menu.tmpl.html","&lt;md-toolbar class=\"sidebar-left-toolbar\" md-theme=\"{{::triSkin.elements.logo}}\">&lt;div class=\"md-toolbar-tools\" layout=\"row\" layout-align=\"start center\">&lt;div class=\"sidebar-left-logo\">&lt;img ng-src=\"{{::vm.sidebarInfo.appLogo}}\" alt=\"{{::vm.sidebarInfo.appName}}\" width=\"24px\">&lt;/div>&lt;h2 flex=\"\" class=\"sidebar-left-title\">{{::vm.sidebarInfo.appName}}&lt;/h2>&lt;md-button class=\"md-icon-button sidebar-left-icon\" ng-click=\"vm.toggleIconMenu()\" aria-label=\"Open side menu\">&lt;md-icon md-font-icon=\"\" ng-class=\"{ \'zmdi zmdi-unfold-more\' : vm.layout.sideMenuSize == \'icon\', \'zmdi zmdi-unfold-less\' : vm.layout.sideMenuSize == \'full\' }\">&lt;/md-icon>&lt;/md-button>&lt;/div>&lt;/md-toolbar>&lt;tri-menu md-theme=\"{{triSkin.elements.sidebar}}\" flex=\"\">&lt;/tri-menu>");
+$templateCache.put("app/triangular/components/notifications-panel/notifications-panel.tmpl.html","&lt;md-content flex=\"\" layout=\"\" class=\"admin-notifications\">&lt;md-tabs flex=\"\" md-stretch-tabs=\"always\" md-selected=\"vm.currentTab\">&lt;md-tab>&lt;md-tab-label>&lt;md-icon md-font-icon=\"zmdi zmdi-email\">&lt;/md-icon>&lt;/md-tab-label>&lt;md-tab-body>&lt;md-content>&lt;md-list>&lt;md-list-item class=\"md-3-line\" ng-repeat=\"email in ::vm.emails\" ng-click=\"vm.openMail(email)\">&lt;img class=\"md-avatar animate\" ng-src=\"{{::email.from.image}}\" alt=\"{{::email.from.name}}\">&lt;div class=\"md-list-item-text\">&lt;div class=\"email-inbox-list-item-name-time\" layout=\"row\" layout-align=\"space-between start\">&lt;h3>{{::email.from.name}}&lt;/h3>&lt;p class=\"md-caption\" am-time-ago=\"::email.date\">&lt;/p>&lt;/div>&lt;h4>{{::email.subject}}&lt;/h4>&lt;/div>&lt;md-divider ng-hide=\"$last\">&lt;/md-divider>&lt;/md-list-item>&lt;/md-list>&lt;/md-content>&lt;/md-tab-body>&lt;/md-tab>&lt;md-tab>&lt;md-tab-label>&lt;md-icon md-font-icon=\"fa fa-bell-o\">&lt;/md-icon>&lt;/md-tab-label>&lt;md-tab-body>&lt;md-content>&lt;md-list>&lt;div ng-repeat=\"group in ::vm.notificationGroups\">&lt;md-subheader class=\"md-primary\">{{::group.name}}&lt;/md-subheader>&lt;md-list-item ng-repeat=\"notification in ::group.notifications\" layout=\"row\" layout-align=\"space-between center\">&lt;md-icon md-font-icon=\"{{::notification.icon}}\" ng-style=\"{ color: notification.iconColor }\">&lt;/md-icon>&lt;p>{{::notification.title}}&lt;/p>&lt;span class=\"md-caption\" am-time-ago=\"::notification.date\">&lt;/span>&lt;/md-list-item>&lt;/div>&lt;/md-list>&lt;/md-content>&lt;/md-tab-body>&lt;/md-tab>&lt;md-tab>&lt;md-tab-label>&lt;md-icon md-font-icon=\"zmdi zmdi-account\">&lt;/md-icon>&lt;/md-tab-label>&lt;md-tab-body>&lt;md-content>&lt;md-list>&lt;div ng-repeat=\"group in ::vm.settingsGroups\">&lt;md-subheader class=\"md-primary\">&lt;span translate=\"\">{{::group.name}}&lt;/span>&lt;/md-subheader>&lt;md-list-item ng-repeat=\"setting in ::group.settings\" layout=\"row\" layout-align=\"space-around center\">&lt;md-icon md-font-icon=\"{{::setting.icon}}\">&lt;/md-icon>&lt;p translate=\"\">{{::setting.title}}&lt;/p>&lt;md-switch class=\"md-secondary\" ng-model=\"setting.enabled\">&lt;/md-switch>&lt;/md-list-item>&lt;/div>&lt;div ng-repeat=\"group in ::vm.statisticsGroups\">&lt;md-subheader class=\"md-primary\">&lt;span translate=\"\">{{::group.name}}&lt;/span>&lt;/md-subheader>&lt;md-list-item ng-repeat=\"stat in ::group.stats\" layout=\"column\" layout-align=\"space-around start\">&lt;md-progress-linear ng-class=\"::stat.mdClass\" md-mode=\"determinate\" ng-value=\"::stat.value\">&lt;/md-progress-linear>&lt;p translate=\"\">{{::stat.title}}&lt;/p>&lt;/md-list-item>&lt;/div>&lt;/md-list>&lt;/md-content>&lt;/md-tab-body>&lt;/md-tab>&lt;/md-tabs>&lt;/md-content>");
+$templateCache.put("app/triangular/components/table/table-directive.tmpl.html","&lt;table class=\"md-table\">&lt;thead>&lt;tr>&lt;th ng-repeat=\"column in columns\" ng-click=\"sortClick(column.field)\" ng-class=\"headerClass(column.field)\">&lt;md-icon ng-show=\"showSortOrder(column.field, true)\" class=\"zmdi-hc-rotate-90\" md-font-icon=\"zmdi zmdi-arrow-back\">&lt;/md-icon>&lt;md-icon ng-show=\"showSortOrder(column.field, false)\" class=\"zmdi-hc-rotate-270\" md-font-icon=\"zmdi zmdi-arrow-back\">&lt;/md-icon>&lt;span>{{column.title | translate}}&lt;/span>&lt;/th>&lt;/tr>&lt;/thead>&lt;tbody>&lt;tr ng-repeat=\"content in contents | filter:filters | startFrom:page * pageSize | limitTo: pageSize\">&lt;td ng-repeat=\"column in columns\" ng-bind-html=\"cellContents(column, content)\" ng-class=\"column.field + \'-cell\'\">&lt;/td>&lt;/tr>&lt;/tbody>&lt;tfoot>&lt;tr>&lt;td colspan=\"{{columns.length}}\">&lt;div class=\"md-table-footer\" layout=\"row\" layout-align=\"end center\">&lt;div class=\"md-table-page-select\" layout=\"row\" layout-align=\"center center\">&lt;span>TABLES.ROWS&lt;/span>&lt;md-select ng-model=\"pageSize\" ng-change=\"refresh(true)\">&lt;md-option value=\"5\">5&lt;/md-option>&lt;md-option value=\"10\">10&lt;/md-option>&lt;md-option value=\"25\">25&lt;/md-option>&lt;md-option value=\"50\">50&lt;/md-option>&lt;md-option value=\"100\">100&lt;/md-option>&lt;/md-select>&lt;/div>&lt;span class=\"md-table-info\">{{pageStart()}} - {{pageEnd()}} &lt;span translate=\"\">TABLES.OF&lt;/span> {{totalItems()}}&lt;/span>&lt;div class=\"md-table-page-nav\">&lt;md-button ng-disabled=\"page == 0\" ng-click=\"page = page - 1\" aria-label=\"{{\'TABLES.PREV\' | translate}}\" class=\"md-primary md-icon-button\">&lt;md-icon md-font-icon=\"zmdi zmdi-chevron-left\">&lt;/md-icon>&lt;/md-button>&lt;md-button ng-disabled=\"page == numberOfPages() - 1\" ng-click=\"page = page + 1\" aria-label=\"{{\'TABLES.NEXT\' | translate}}\" class=\"md-primary md-icon-button\">&lt;md-icon md-font-icon=\"zmdi zmdi-chevron-right\">&lt;/md-icon>&lt;/md-button>&lt;/div>&lt;/div>&lt;/td>&lt;/tr>&lt;/tfoot>&lt;/table>");
+$templateCache.put("app/triangular/components/toolbars/toolbar.tmpl.html","&lt;div class=\"md-toolbar-tools\">&lt;md-button class=\"md-icon-button\" ng-if=\"!vm.hideMenuButton()\" ng-click=\"vm.openSideNav(\'left\')\" aria-label=\"side navigation\">&lt;md-icon md-font-icon=\"zmdi zmdi-menu\">&lt;/md-icon>&lt;/md-button>&lt;h2 hide-sm=\"\" flex=\"\">&lt;span ng-repeat=\"crumb in vm.breadcrumbs.crumbs\">&lt;span translate=\"\">{{crumb.name}}&lt;/span>&lt;md-icon md-font-icon=\"zmdi zmdi-chevron-right\" ng-if=\"!$last\">&lt;/md-icon>&lt;/span>&lt;/h2>&lt;md-menu>&lt;md-button class=\"md-icon-button\" aria-label=\"language\" ng-click=\"$mdOpenMenu()\">&lt;md-icon md-font-icon=\"zmdi zmdi-globe-alt\">&lt;/md-icon>&lt;/md-button>&lt;md-menu-content width=\"3\">&lt;md-menu-item ng-repeat=\"language in ::vm.languages\">&lt;md-button ng-click=\"vm.switchLanguage(language.key)\" translate=\"{{::language.name}}\" aria-label=\"{{::language.name}}\">&lt;/md-button>&lt;/md-menu-item>&lt;/md-menu-content>&lt;/md-menu>&lt;md-button class=\"md-icon-button toolbar-button animated\" ng-click=\"vm.toggleNotificationsTab(0)\" aria-label=\"side navigation\">&lt;md-icon md-font-icon=\"zmdi zmdi-email\">&lt;/md-icon>&lt;span class=\"toolbar-button-badge animated\" theme-background=\"accent\" ng-class=\"{ \'toolbar-button-badge-new\' : vm.emailNew }\">5&lt;/span>&lt;/md-button>&lt;md-button class=\"md-icon-button toolbar-button\" ng-click=\"vm.toggleNotificationsTab(1)\">&lt;md-icon md-font-icon=\"fa fa-bell-o\">&lt;/md-icon>&lt;span class=\"toolbar-button-badge\" theme-background=\"accent\">2&lt;/span>&lt;/md-button>&lt;md-menu>&lt;md-button aria-label=\"Open user menu\" ng-click=\"$mdOpenMenu()\">&lt;img class=\"toolbar-user-avatar\" src=\"assets/images/avatars/avatar-5.png\"> Christos&lt;/md-button>&lt;md-menu-content width=\"4\">&lt;md-menu-item>&lt;md-button ng-click=\"vm.toggleNotificationsTab(2)\" aria-label=\"side navigation\">&lt;md-icon md-font-icon=\"zmdi zmdi-settings\">&lt;/md-icon>&lt;span translate=\"ADMIN.TOOLBAR.SETTINGS\">&lt;/span>&lt;/md-button>&lt;/md-menu-item>&lt;md-menu-item>&lt;md-button href=\"#/profile\" aria-label=\"side navigation\">&lt;md-icon md-font-icon=\"zmdi zmdi-account\">&lt;/md-icon>&lt;span translate=\"ADMIN.TOOLBAR.PROFILE\">&lt;/span>&lt;/md-button>&lt;/md-menu-item>&lt;md-menu-divider>&lt;/md-menu-divider>&lt;md-menu-item>&lt;md-button href=\"#/login\" aria-label=\"side navigation\">&lt;md-icon md-font-icon=\"zmdi zmdi-sign-in\">&lt;/md-icon>&lt;span translate=\"ADMIN.TOOLBAR.LOGOUT\">&lt;/span>&lt;/md-button>&lt;/md-menu-item>&lt;/md-menu-content>&lt;/md-menu>&lt;/div>");
+$templateCache.put("app/triangular/components/widget/widget.tmpl.html","&lt;div class=\"widget md-whiteframe-z2\" ng-class=\"::{\'widget-overlay-title\': vm.overlayTitle}\" flex=\"\" layout=\"{{vm.widgetLayout}}\">&lt;div class=\"widget-title\" ng-if=\"::(vm.title || vm.subtitle)\" layout=\"row\" layout-padding=\"\" layout-align=\"space-between center\" flex-order=\"{{vm.titleOrder}}\">&lt;div layout=\"column\" ng-if=\"::vm.avatar\">&lt;img ng-src=\"{{::vm.avatar}}\" class=\"widget-avatar\">&lt;/div>&lt;div flex=\"\" layout=\"column\">&lt;h3 class=\"md-subhead\" ng-if=\"::vm.title\" translate=\"\">{{::vm.title}}&lt;/h3>&lt;p class=\"md-body-1\" ng-if=\"::vm.subtitle\" translate=\"\">{{::vm.subtitle}}&lt;/p>&lt;/div>&lt;md-menu ng-if=\"::vm.menu\">&lt;md-button class=\"widget-button md-icon-button\" ng-click=\"$mdOpenMenu()\" aria-label=\"open menu\">&lt;md-icon md-font-icon=\"{{::vm.menu.icon}}\">&lt;/md-icon>&lt;/md-button>&lt;md-menu-content>&lt;md-menu-item ng-repeat=\"item in ::vm.menu.items\">&lt;md-button ng-click=\"item.click($event)\">&lt;md-icon ng-if=\"::item.icon\" md-font-icon=\"{{::item.icon}}\">&lt;/md-icon>&lt;span translate=\"\">{{::item.title}}&lt;/span>&lt;/md-button>&lt;/md-menu-item>&lt;/md-menu-content>&lt;/md-menu>&lt;/div>&lt;div class=\"widget-content\" layout=\"{{vm.contentLayout}}\" layout-align=\"{{vm.contentLayoutAlign}}\" ng-class=\"{\'layout-padding\': vm.contentPadding}\" ng-transclude=\"\" flex-order=\"{{vm.contentOrder}}\">&lt;/div>&lt;div class=\"widget-loading ng-hide\" ng-show=\"vm.loading\" layout=\"\" layout-fill=\"\" layout-align=\"center center\">&lt;div class=\"widget-loading-inner\" ng-show=\"vm.loading\">&lt;md-progress-circular md-mode=\"indeterminate\">&lt;/md-progress-circular>&lt;/div>&lt;/div>&lt;/div>");
+$templateCache.put("app/triangular/layouts/default/default-no-scroll.tmpl.html","&lt;div layout=\"row\" class=\"full-height\">&lt;md-sidenav class=\"admin-sidebar-left md-sidenav-left md-whiteframe-z2\" md-component-id=\"left\" md-is-locked-open=\"layout.sideMenuSize !== \'hidden\' &amp;&amp; $mdMedia(\'gt-md\')\" ui-view=\"sidebarLeft\" ng-class=\"{ \'admin-sidebar-collapsed\': layout.sideMenuSize == \'icon\' }\" ng-mouseover=\"layoutController.activateHover()\" ng-mouseleave=\"layoutController.removeHover()\">&lt;/md-sidenav>&lt;div id=\"admin-panel\" layout=\"column\" flex=\"\">&lt;tri-loader>&lt;/tri-loader>&lt;md-toolbar class=\"admin-toolbar\" md-theme=\"{{triSkin.elements.toolbar}}\" ui-view=\"toolbar\" ng-class=\"[layout.toolbarSize,layout.toolbarClass]\">&lt;/md-toolbar>&lt;div ui-view=\"content\" layout=\"column\" flex=\"\" class=\"overflow-hidden\">&lt;/div>&lt;div ui-view=\"belowContent\">&lt;/div>&lt;/div>&lt;md-sidenav layout=\"\" layout-fill=\"\" class=\"md-sidenav-right md-whiteframe-z2\" md-component-id=\"notifications\" ui-view=\"sidebarRight\">&lt;/md-sidenav>&lt;/div>");
+$templateCache.put("app/triangular/layouts/default.tmpl.html","&lt;div layout=\"row\" class=\"full-height\">&lt;md-sidenav class=\"admin-sidebar-left md-sidenav-left md-whiteframe-z2\" md-component-id=\"left\" md-is-locked-open=\"layout.sideMenuSize !== \'hidden\' &amp;&amp; $mdMedia(\'gt-md\')\" ui-view=\"sidebarLeft\" ng-class=\"{ \'admin-sidebar-collapsed\': layout.sideMenuSize == \'icon\' }\" ng-mouseover=\"layoutController.activateHover()\" ng-mouseleave=\"layoutController.removeHover()\">&lt;/md-sidenav>&lt;div id=\"admin-panel\" layout=\"column\" flex=\"\">&lt;tri-loader>&lt;/tri-loader>&lt;md-toolbar class=\"admin-toolbar\" ng-if=\"layout.showToolbar\" md-theme=\"{{triSkin.elements.toolbar}}\" ui-view=\"toolbar\" ng-class=\"[layout.toolbarSize,layout.toolbarClass]\">&lt;/md-toolbar>&lt;md-content ng-class=\"layout.contentClass\" flex=\"\" tri-default-content=\"\" ui-view=\"content\">&lt;/md-content>&lt;div ui-view=\"belowContent\">&lt;/div>&lt;/div>&lt;md-sidenav layout=\"\" layout-fill=\"\" class=\"md-sidenav-right md-whiteframe-z2\" md-component-id=\"notifications\" ui-view=\"sidebarRight\">&lt;/md-sidenav>&lt;/div>");}]);
+
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.layouts', [
+
+        ]);
+})();
+'use strict';
+
+/**
+ * @ngdoc function
+ * @name AdminController
+ * @module triAngular
+ * @kind function
+ *
+ * @description
+ *
+ * Handles the admin view
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.layouts')
+        .controller('DefaultLayoutController', DefaultLayoutController);
+
+    /* @ngInject */
+    function DefaultLayoutController($scope, $element, triLayout) {
+        // we need to use the scope here because otherwise the expression in md-is-locked-open doesnt work
+        $scope.layout = triLayout.layout; //eslint-disable-line
+        var vm = this;
+
+        vm.activateHover = activateHover;
+        vm.removeHover  = removeHover;
+
+        ////////////////
+
+        function activateHover() {
+            if(triLayout.layout.sideMenuSize === 'icon') {
+                $element.find('.admin-sidebar-left').addClass('hover');
+            }
+        }
+
+        function removeHover () {
+            if(triLayout.layout.sideMenuSize === 'icon') {
+                $element.find('.admin-sidebar-left').removeClass('hover');
+            }
+        }
+    }
+    DefaultLayoutController.$inject = ["$scope", "$element", "triLayout"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.layouts')
+        .directive('triDefaultContent', triDefaultContent);
+
+    /* @ngInject */
+    function triDefaultContent ($rootScope, $compile, $templateRequest) {
+        // Usage:
+        //
+        // Creates:
+        //
+        var directive = {
+            link: link,
+            replace: true,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link($scope, $element) {
+            // scroll page to the top when content is loaded (stops pages keeping scroll position even when they have changed url)
+            $scope.$on('$stateChangeStart', scrollToTop);
+
+            // when content view has loaded add footer if needed and send mdContentLoaded event
+            $scope.$on('$viewContentLoaded', injectFooterUpdateContent);
+
+            ////////////////////////
+
+            function scrollToTop() {
+                $element.scrollTop(0);
+            }
+
+            function injectFooterUpdateContent() {
+                var contentView = $element.find('#admin-panel-content-view');
+                var footerElem = contentView.find('#footer');
+                if (footerElem.length === 0) {
+                    // add footer to the content view
+                    $templateRequest('app/triangular/components/footer/footer.tmpl.html')
+                    .then(function(template) {
+                        // compile template with current scope and add to the content
+                        var linkFn = $compile(template);
+                        var content = linkFn($scope);
+                        contentView.append(content);
+                    });
+
+                }
+            }
+        }
+    }
+    triDefaultContent.$inject = ["$rootScope", "$compile", "$templateRequest"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components', [
+        ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .directive('triWizard', TriWizard);
+
+    /* @ngInject */
+    function TriWizard() {
+        // Usage: &lt;div tri-wizard> (put some forms in here) &lt;/div>
+        //
+        // Creates: Nothing
+        //
+        var directive = {
+            bindToController: true,
+            controller: WizardController,
+            controllerAs: 'triWizard',
+            restrict: 'A'
+        };
+        return directive;
+    }
+
+    /* @ngInject */
+    function WizardController($scope) {
+        var vm = this;
+
+        var forms = [];
+        var totalErrors = 0;
+        var fixedErrors = 0;
+
+        vm.currentStep = 0;
+        vm.getForm = getForm;
+        vm.isFormValid = isFormValid;
+        vm.nextStep = nextStep;
+        vm.nextStepDisabled = nextStepDisabled;
+        vm.prevStep = prevStep;
+        vm.prevStepDisabled = prevStepDisabled;
+        vm.progress = 0;
+        vm.registerForm = registerForm;
+        vm.updateProgress = updateProgress;
+
+        ////////////////
+
+        function getForm(index) {
+            return forms[index];
+        }
+
+        function nextStep() {
+            vm.currentStep = vm.currentStep + 1;
+        }
+
+        function nextStepDisabled() {
+            // get current active form
+            var form = $scope.triWizard.getForm(vm.currentStep);
+            var formInvalid = true;
+            if(angular.isDefined(form) &amp;&amp; angular.isDefined(form.$invalid)) {
+                formInvalid = form.$invalid;
+            }
+            return formInvalid;
+        }
+
+        function isFormValid(step) {
+            if(angular.isDefined(forms[step])) {
+                return forms[step].$valid;
+            }
+        }
+
+        function prevStep() {
+            vm.currentStep = vm.currentStep - 1;
+        }
+
+        function prevStepDisabled() {
+            return vm.currentStep === 0;
+        }
+
+        function registerForm(form) {
+            forms.push(form);
+            var removeWatch = $scope.$watch(form.$name + '.$pristine', function(oldPristine, newPristine) {
+                if(newPristine === true) {
+                    totalErrors = calculateErrors();
+                    removeWatch();
+                }
+            });
+        }
+
+        function updateProgress() {
+            var errors = calculateErrors();
+            fixedErrors = totalErrors - errors;
+
+            // calculate percentage process for completing the wizard
+            vm.progress = Math.floor((fixedErrors / totalErrors) * 100);
+        }
+
+        function calculateErrors() {
+            var errorCount = 0;
+            for (var form = forms.length - 1; form >= 0; form--) {
+                if(angular.isDefined(forms[form].$error)) {
+                    for(var error in forms[form].$error) {
+                        errorCount += forms[form].$error[error].length;
+                    }
+                }
+            }
+            return errorCount;
+        }
+    }
+    WizardController.$inject = ["$scope"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .directive('triWizardForm', WizardFormProgress);
+
+    /* @ngInject */
+    function WizardFormProgress() {
+        // Usage:
+        //  &lt;div tri-wizard>
+        //      &lt;form tri-wizard-form>
+        //      &lt;/form>
+        //  &lt;/div>
+        //
+        var directive = {
+            require: ['form', '^triWizard'],
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link(scope, element, attrs, require) {
+            var ngFormCtrl = require[0];
+            var triWizardCtrl = require[1];
+
+            // register this form with the parent triWizard directive
+            triWizardCtrl.registerForm(ngFormCtrl);
+
+            // watch for form input changes and update the wizard progress
+            element.on('input', function() {
+                triWizardCtrl.updateProgress();
+            });
+        }
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .directive('triWidget2', widget);
+
+    /* @ngInject */
+    function widget ($mdTheming) {
+        // Usage:
+        //
+        // ```html
+        // &lt;widget title="'Nice Title'" subtitle="'Subtitle'" avatar="http://myavatar.jpg" title-position="top|bottom|left|right" content-padding overlay-title>content here&lt;/widget>
+        // ```
+
+        // Creates:
+        //
+        // Widget for use in dashboards
+        var directive = {
+            restrict: 'E',
+            templateUrl: 'app/triangular/components/widget/widget.tmpl.html',
+            transclude: true,
+            replace: true,
+            scope: {
+                title: '@',
+                subtitle: '@',
+                avatar: '@'
+            },
+            bindToController: true,
+            controller: Controller,
+            controllerAs: 'vm',
+            link: link
+        };
+        return directive;
+
+        function link($scope, $element, attrs) {
+            // set the value of the widget layout attribute
+            $scope.vm.widgetLayout = attrs.titlePosition === 'left' || attrs.titlePosition === 'right' ? 'row' : 'column';
+            // set the layout attribute for the widget content
+            $scope.vm.contentLayout = angular.isUndefined(attrs.contentLayout) ? 'column' : attrs.contentLayout;
+            // set if the layout-padding attribute will be added
+            $scope.vm.contentPadding = angular.isDefined(attrs.contentPadding);
+            // set the content align
+            $scope.vm.contentLayoutAlign = angular.isUndefined(attrs.contentLayoutAlign) ? '' : attrs.contentLayoutAlign;
+            console.log($element, $scope.vm.contentLayoutAlign);
+            // set the order of the title and content based on title position
+            $scope.vm.titleOrder = attrs.titlePosition === 'right' || attrs.titlePosition === 'bottom' ? 2 : 1;
+            $scope.vm.contentOrder = attrs.titlePosition === 'right' || attrs.titlePosition === 'bottom' ? 1 : 2;
+            // set if we overlay the title on top of the widget content
+            $scope.vm.overlayTitle = angular.isUndefined(attrs.overlayTitle) ? undefined : true;
+
+            $mdTheming($element);
+
+            if(angular.isDefined(attrs.class)) {
+                $element.addClass(attrs.class);
+            }
+
+            if(angular.isDefined(attrs.backgroundImage)) {
+                $element.css('background-image', 'url(' + attrs.backgroundImage + ')');
+            }
+
+            $scope.menuClick = function($event) {
+                if(angular.isUndefined($scope.menu.menuClick)) {
+                    $scope.menu.menuClick($event);
+                }
+            };
+
+            // remove title attribute to stop popup on hover
+            $element.attr('title', '');
+        }
+    }
+    widget.$inject = ["$mdTheming"];
+
+    /* @ngInject */
+    function Controller () {
+        var vm = this;
+        vm.menu = null;
+        vm.loading = false;
+
+        this.setMenu = function(menu) {
+            vm.menu = menu;
+        };
+
+        this.setLoading = function(loading) {
+            vm.loading = loading;
+        };
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .directive('triWidget', widget);
+
+    /* @ngInject */
+    function widget ($mdTheming) {
+        // Usage:
+        //
+        // ```html
+        // &lt;widget title="'Nice Title'" subtitle="'Subtitle'" avatar="http://myavatar.jpg" title-position="top|bottom|left|right" content-padding overlay-title>content here&lt;/widget>
+        // ```
+
+        // Creates:
+        //
+        // Widget for use in dashboards
+        var directive = {
+            restrict: 'E',
+            templateUrl: 'app/triangular/components/widget/widget.tmpl.html',
+            transclude: true,
+            replace: true,
+            scope: {
+                title: '@',
+                subtitle: '@',
+                avatar: '@'
+            },
+            bindToController: true,
+            controller: Controller,
+            controllerAs: 'vm',
+            link: link
+        };
+        return directive;
+
+        function link($scope, $element, attrs) {
+            // set the value of the widget layout attribute
+            $scope.vm.widgetLayout = attrs.titlePosition === 'left' || attrs.titlePosition === 'right' ? 'row' : 'column';
+            // set the layout attribute for the widget content
+            $scope.vm.contentLayout = angular.isUndefined(attrs.contentLayout) ? 'column' : attrs.contentLayout;
+            // set if the layout-padding attribute will be added
+            $scope.vm.contentPadding = angular.isDefined(attrs.contentPadding);
+            // set the content align
+            $scope.vm.contentLayoutAlign = angular.isUndefined(attrs.contentLayoutAlign) ? '' : attrs.contentLayoutAlign;
+            // set the order of the title and content based on title position
+            $scope.vm.titleOrder = attrs.titlePosition === 'right' || attrs.titlePosition === 'bottom' ? 2 : 1;
+            $scope.vm.contentOrder = attrs.titlePosition === 'right' || attrs.titlePosition === 'bottom' ? 1 : 2;
+            // set if we overlay the title on top of the widget content
+            $scope.vm.overlayTitle = angular.isUndefined(attrs.overlayTitle) ? undefined : true;
+
+            $mdTheming($element);
+
+            if(angular.isDefined(attrs.class)) {
+                $element.addClass(attrs.class);
+            }
+
+            if(angular.isDefined(attrs.backgroundImage)) {
+                $element.css('background-image', 'url(' + attrs.backgroundImage + ')');
+            }
+
+            $scope.menuClick = function($event) {
+                if(angular.isUndefined($scope.menu.menuClick)) {
+                    $scope.menu.menuClick($event);
+                }
+            };
+
+            // remove title attribute to stop popup on hover
+            $element.attr('title', '');
+        }
+    }
+    widget.$inject = ["$mdTheming"];
+
+    /* @ngInject */
+    function Controller () {
+        var vm = this;
+        vm.menu = null;
+        vm.loading = false;
+
+        this.setMenu = function(menu) {
+            vm.menu = menu;
+        };
+
+        this.setLoading = function(loading) {
+            vm.loading = loading;
+        };
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .controller('DefaultToolbarController', DefaultToolbarController);
+
+    /* @ngInject */
+    function DefaultToolbarController($scope, $rootScope, $mdMedia, $translate, $state, $element, $filter, $mdUtil, $mdSidenav, $mdToast, $timeout, triBreadcrumbsService, triSettings, triLayout) {
+        var vm = this;
+        vm.breadcrumbs = triBreadcrumbsService.breadcrumbs;
+        vm.emailNew = false;
+        vm.languages = triSettings.languages;
+        vm.openSideNav = openSideNav;
+        vm.hideMenuButton = hideMenuButton;
+        vm.switchLanguage = switchLanguage;
+        vm.toggleNotificationsTab = toggleNotificationsTab;
+
+        // initToolbar();
+
+        ////////////////
+
+        function openSideNav(navID) {
+            $mdUtil.debounce(function(){
+                $mdSidenav(navID).toggle();
+            }, 300)();
+        }
+
+        function switchLanguage(languageCode) {
+            $translate.use(languageCode)
+            .then(function() {
+                $mdToast.show(
+                    $mdToast.simple()
+                    .content($filter('translate')('MESSAGES.LANGUAGE_CHANGED'))
+                    .position('bottom right')
+                    .hideDelay(500)
+                );
+            });
+        }
+
+        function hideMenuButton() {
+            return triLayout.layout.sideMenuSize !== 'hidden' &amp;&amp; $mdMedia('gt-md');
+        }
+
+        function toggleNotificationsTab(tab) {
+            $rootScope.$broadcast('triSwitchNotificationTab', tab);
+            vm.openSideNav('notifications');
+        }
+
+        $scope.$on('newMailNotification', function(){
+            vm.emailNew = true;
+        });
+    }
+    DefaultToolbarController.$inject = ["$scope", "$rootScope", "$mdMedia", "$translate", "$state", "$element", "$filter", "$mdUtil", "$mdSidenav", "$mdToast", "$timeout", "triBreadcrumbsService", "triSettings", "triLayout"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .directive('triTable', triTable);
+
+    /* @ngInject */
+    function triTable($filter) {
+        var directive = {
+            restrict: 'E',
+            scope: {
+                columns: '=',
+                contents: '=',
+                filters: '='
+            },
+            link: link,
+            templateUrl: 'app/triangular/components/table/table-directive.tmpl.html'
+        };
+        return directive;
+
+        function link($scope, $element, attrs) {
+            var sortableColumns = [];
+            var activeSortColumn = null;
+            var activeSortOrder = false;
+
+            // init page size if not set to default
+            $scope.pageSize = angular.isUndefined(attrs.pageSize) ? 0 : attrs.pageSize;
+
+            // init page if not set to default
+            $scope.page = angular.isUndefined(attrs.page) ? 0 : attrs.page;
+
+            // make an array of all sortable columns
+            angular.forEach($scope.columns, function(column) {
+                if(column.sortable) {
+                    sortableColumns.push(column.field);
+                }
+            });
+
+            $scope.refresh = function(resetPage) {
+                if(resetPage === true) {
+                    $scope.page = 0;
+                }
+                $scope.contents = $filter('orderBy')($scope.contents, activeSortColumn, activeSortOrder);
+            };
+
+            // if we have sortable columns sort by first by default
+            if(sortableColumns.length > 0) {
+                // sort first column by default
+                activeSortOrder = false;
+                activeSortColumn = sortableColumns[0];
+                $scope.refresh();
+            }
+
+            $scope.sortClick = function(field) {
+                if(sortableColumns.indexOf(field) !== -1) {
+                    if(field === activeSortColumn) {
+                        activeSortOrder = !activeSortOrder;
+                    }
+                    activeSortColumn = field;
+                    $scope.refresh();
+                }
+            };
+
+            $scope.showSortOrder = function(field, orderDown) {
+                return field === activeSortColumn &amp;&amp; activeSortOrder === orderDown;
+            };
+
+            $scope.headerClass = function(field) {
+                var classes = [];
+                if(sortableColumns.indexOf(field) !== -1) {
+                    classes.push('sortable');
+                }
+                if(field === activeSortColumn) {
+                    classes.push('sorted');
+                }
+                return classes;
+            };
+
+            $scope.cellContents = function(column, content) {
+                if(angular.isDefined(column.filter)) {
+                    return $filter(column.filter)(content[column.field]);
+                }
+                else {
+                    return content[column.field];
+                }
+            };
+
+            $scope.totalItems = function() {
+                return $scope.contents.length;
+            };
+
+            $scope.numberOfPages = function() {
+                return Math.ceil($scope.contents.length / $scope.pageSize);
+            };
+
+            $scope.pageStart = function() {
+                return ($scope.page * $scope.pageSize) + 1;
+            };
+
+            $scope.pageEnd = function() {
+                var end = (($scope.page + 1) * $scope.pageSize);
+                if(end > $scope.contents.length) {
+                    end = $scope.contents.length;
+                }
+                return end;
+            };
+
+            $scope.goToPage = function (page) {
+                $scope.page = page;
+            };
+        }
+    }
+    triTable.$inject = ["$filter"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .filter('startFrom', startFrom);
+
+    function startFrom() {
+        return filterFilter;
+
+        ////////////////
+
+        function filterFilter(input, start) {
+            start = +start;
+            return input.slice(start);
+        }
+    }
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .filter('tableImage', tableImage);
+
+    function tableImage($sce) {
+        return filterFilter;
+
+        ////////////////
+
+        function filterFilter(value) {
+            return $sce.trustAsHtml('&lt;div style=\"background-image: url(\'' + value + '\')\"/>');
+        }
+    }
+    tableImage.$inject = ["$sce"];
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .controller('NotificationsPanelController', NotificationsPanelController);
+
+    /* @ngInject */
+    function NotificationsPanelController($scope, $http, $mdSidenav, $state, API_CONFIG) {
+        var vm = this;
+        // sets the current active tab
+        vm.close = close;
+        vm.currentTab = 0;
+        vm.notificationGroups = [{
+            name: 'Twitter',
+            notifications: [{
+                title: 'Mention from oxygenna',
+                icon: 'fa fa-twitter',
+                iconColor: '#55acee',
+                date: moment().startOf('hour')
+            },{
+                title: 'Oxygenna',
+                icon: 'fa fa-twitter',
+                iconColor: '#55acee',
+                date: moment().startOf('hour')
+            },{
+                title: 'Oxygenna',
+                icon: 'fa fa-twitter',
+                iconColor: '#55acee',
+                date: moment().startOf('hour')
+            },{
+                title: 'Followed by Oxygenna',
+                icon: 'fa fa-twitter',
+                iconColor: '#55acee',
+                date: moment().startOf('hour')
+            }]
+        },{
+            name: 'Server',
+            notifications: [{
+                title: 'Server Down',
+                icon: 'zmdi zmdi-alert-circle',
+                iconColor: 'rgb(244, 67, 54)',
+                date: moment().startOf('hour')
+            },{
+                title: 'Slow Response Time',
+                icon: 'zmdi zmdi-alert-triangle',
+                iconColor: 'rgb(255, 152, 0)',
+                date: moment().startOf('hour')
+            },{
+                title: 'Server Down',
+                icon: 'zmdi zmdi-alert-circle',
+                iconColor: 'rgb(244, 67, 54)',
+                date: moment().startOf('hour')
+            }]
+        },{
+            name: 'Sales',
+            notifications: [{
+                title: 'Triangular Admin $21',
+                icon: 'zmdi zmdi-shopping-cart',
+                iconColor: 'rgb(76, 175, 80)',
+                date: moment().startOf('hour')
+            },{
+                title: 'Lambda WordPress $60',
+                icon: 'zmdi zmdi-shopping-cart',
+                iconColor: 'rgb(76, 175, 80)',
+                date: moment().startOf('hour')
+            },{
+                title: 'Triangular Admin $21',
+                icon: 'zmdi zmdi-shopping-cart',
+                iconColor: 'rgb(76, 175, 80)',
+                date: moment().startOf('hour')
+            },{
+                title: 'Triangular Admin $21',
+                icon: 'zmdi zmdi-shopping-cart',
+                iconColor: 'rgb(76, 175, 80)',
+                date: moment().startOf('hour')
+            },{
+                title: 'Lambda WordPress $60',
+                icon: 'zmdi zmdi-shopping-cart',
+                iconColor: 'rgb(76, 175, 80)',
+                date: moment().startOf('hour')
+            },{
+                title: 'Triangular Admin $21',
+                icon: 'zmdi zmdi-shopping-cart',
+                iconColor: 'rgb(76, 175, 80)',
+                date: moment().startOf('hour')
+            }]
+        }];
+        vm.openMail = openMail;
+        vm.settingsGroups = [{
+            name: 'ADMIN.NOTIFICATIONS.ACCOUNT_SETTINGS',
+            settings: [{
+                title: 'ADMIN.NOTIFICATIONS.SHOW_LOCATION',
+                icon: 'zmdi zmdi-pin',
+                enabled: true
+            },{
+                title: 'ADMIN.NOTIFICATIONS.SHOW_AVATAR',
+                icon: 'zmdi zmdi-face',
+                enabled: false
+            },{
+                title: 'ADMIN.NOTIFICATIONS.SEND_NOTIFICATIONS',
+                icon: 'zmdi zmdi-notifications-active',
+                enabled: true
+            }]
+        },{
+            name: 'ADMIN.NOTIFICATIONS.CHAT_SETTINGS',
+            settings: [{
+                title: 'ADMIN.NOTIFICATIONS.SHOW_USERNAME',
+                icon: 'zmdi zmdi-account',
+                enabled: true
+            },{
+                title: 'ADMIN.NOTIFICATIONS.SHOW_PROFILE',
+                icon: 'zmdi zmdi-account-box',
+                enabled: false
+            },{
+                title: 'ADMIN.NOTIFICATIONS.ALLOW_BACKUPS',
+                icon: 'zmdi zmdi-cloud-upload',
+                enabled: true
+            }]
+        }];
+
+        vm.statisticsGroups = [{
+            name: 'ADMIN.NOTIFICATIONS.USER_STATS',
+            stats: [{
+                title: 'ADMIN.NOTIFICATIONS.STORAGE_SPACE',
+                mdClass: 'md-primary',
+                value: 60
+            },{
+                title: 'ADMIN.NOTIFICATIONS.BANDWIDTH_USAGAE',
+                mdClass: 'md-accent',
+                value: 10
+            },{
+                title: 'ADMIN.NOTIFICATIONS.MEMORY_USAGAE',
+                mdClass: 'md-warn',
+                value: 100
+            }]
+        },{
+            name: 'ADMIN.NOTIFICATIONS.SERVER_STATS',
+            stats: [{
+                title: 'ADMIN.NOTIFICATIONS.STORAGE_SPACE',
+                mdClass: 'md-primary',
+                value: 60
+            },{
+                title: 'ADMIN.NOTIFICATIONS.BANDWIDTH_USAGAE',
+                mdClass: 'md-accent',
+                value: 10
+            },{
+                title: 'ADMIN.NOTIFICATIONS.MEMORY_USAGAE',
+                mdClass: 'md-warn',
+                value: 100
+            }]
+        }];
+
+        ////////////////
+
+        // add an event to switch tabs (used when user clicks a menu item before sidebar opens)
+        $scope.$on('triSwitchNotificationTab', function($event, tab) {
+            vm.currentTab = tab;
+        });
+
+        // fetch some dummy emails from the API
+        $http({
+            method: 'GET',
+            url: API_CONFIG.url + 'email/inbox'
+        }).success(function(data) {
+            vm.emails = data.slice(1,20);
+        });
+
+        function openMail() {
+            $state.go('private.admin.toolbar.inbox');
+            vm.close();
+        }
+
+        function close() {
+            $mdSidenav('notifications').close();
+        }
+    }
+    NotificationsPanelController.$inject = ["$scope", "$http", "$mdSidenav", "$state", "API_CONFIG"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .provider('triMenu', menuProvider);
+
+
+    /* @ngInject */
+    function menuProvider() {
+        // Provider
+        var menu = [];
+
+        this.addMenu = addMenu;
+        this.removeMenu = removeMenu;
+
+        function addMenu(item) {
+            menu.push(item);
+        }
+
+        function removeMenu(state, params) {
+            findAndDestroyMenu(menu, state, params);
+        }
+
+        function findAndDestroyMenu(menu, state, params) {
+            if (menu instanceof Array) {
+                for (var i = 0; i &lt; menu.length; i++) {
+                    if(menu[i].state === state &amp;&amp; menu[i].params === params) {
+                        menu.splice(i, 1);
+                    }
+                    else if(angular.isDefined(menu[i].children)) {
+                        findAndDestroyMenu(menu[i].children, state, params);
+                    }
+                }
+            }
+        }
+
+        // Service
+        this.$get = function() {
+            return {
+                menu: menu,
+                addMenu: addMenu,
+                removeMenu: removeMenu
+            };
+        };
+    }
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .directive('triMenu', triMenuDirective);
+
+    /* @ngInject */
+    function triMenuDirective($location, $mdTheming, triTheming) {
+        // Usage:
+        //
+        // Creates:
+        //
+        var directive = {
+            restrict: 'E',
+            template: '&lt;md-content>&lt;tri-menu-item ng-repeat="item in triMenuController.menu | orderBy:\'priority\'" item="::item">&lt;/tri-menu-item>&lt;/md-content>',
+            scope: {},
+            controller: triMenuController,
+            controllerAs: 'triMenuController',
+            link: link
+        };
+        return directive;
+
+        function link($scope, $element) {
+            $mdTheming($element);
+            var $mdTheme = $element.controller('mdTheme'); //eslint-disable-line
+
+            var menuColor = triTheming.getThemeHue($mdTheme.$mdTheme, 'primary', 'default');
+            var menuColorRGBA = triTheming.rgba(menuColor.value);
+            $element.css({ 'background-color': menuColorRGBA });
+            $element.children('md-content').css({ 'background-color': menuColorRGBA });
+        }
+    }
+    triMenuDirective.$inject = ["$location", "$mdTheming", "triTheming"];
+
+    /* @ngInject */
+    function triMenuController(triMenu) {
+        var triMenuController = this;
+        // get the menu and order it
+        triMenuController.menu = triMenu.menu;
+    }
+    triMenuController.$inject = ["triMenu"];
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .controller('MenuController', MenuController);
+
+    /* @ngInject */
+    function MenuController(triSettings, triLayout) {
+        var vm = this;
+        vm.layout = triLayout.layout;
+        vm.sidebarInfo = {
+            appName: triSettings.name,
+            appLogo: triSettings.logo
+        };
+        vm.toggleIconMenu = toggleIconMenu;
+
+        ////////////
+        function toggleIconMenu() {
+            var menu = vm.layout.sideMenuSize === 'icon' ? 'full' : 'icon';
+            triLayout.setOption('sideMenuSize', menu);
+        }
+    }
+    MenuController.$inject = ["triSettings", "triLayout"];
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .directive('triMenuItem', triMenuItemDirective);
+
+    /* @ngInject */
+    function triMenuItemDirective() {
+        // Usage:
+        //
+        // Creates:
+        //
+        var directive = {
+            restrict: 'E',
+            require: '^triMenu',
+            scope: {
+                item: '='
+            },
+            // replace: true,
+            template: '&lt;div ng-include="::triMenuItem.item.template">&lt;/div>',
+            controller: triMenuItemController,
+            controllerAs: 'triMenuItem',
+            bindToController: true
+        };
+        return directive;
+    }
+
+    /* @ngInject */
+    function triMenuItemController($scope, $mdSidenav, $state, $filter, triBreadcrumbsService) {
+        var triMenuItem = this;
+        // load a template for this directive based on the type ( link | dropdown )
+        triMenuItem.item.template = 'app/triangular/components/menu/menu-item-' + triMenuItem.item.type + '.tmpl.html';
+
+        switch(triMenuItem.item.type) {
+            case 'dropdown':
+                // if we have kids reorder them by priority
+                triMenuItem.item.children = $filter('orderBy')(triMenuItem.item.children, 'priority');
+                triMenuItem.toggleDropdownMenu = toggleDropdownMenu;
+                // add a check for open event
+                $scope.$on('toggleDropdownMenu', function(event, item, open) {
+                    // if this is the item we are looking for
+                    if(triMenuItem.item === item) {
+                        triMenuItem.item.open = open;
+                    }
+                    else {
+                        triMenuItem.item.open = false;
+                    }
+                });
+                // this event is emitted up the tree to open parent menus
+                $scope.$on('openParents', function() {
+                    // openParents event so open the parent item
+                    triMenuItem.item.open = true;
+                    // also add this to the breadcrumbs
+                    triBreadcrumbsService.addCrumb(triMenuItem.item);
+                });
+                break;
+            case 'link':
+                triMenuItem.openLink = openLink;
+
+                // on init check if this is current menu
+                checkItemActive($state.current.name, $state.params);
+
+                $scope.$on('$stateChangeSuccess', function(event, toState, toParams) {
+                    checkItemActive(toState.name, toParams);
+                });
+                break;
+        }
+
+        function checkItemActive() {
+            // first check if the state is the same
+            triMenuItem.item.active = $state.includes(triMenuItem.item.state, triMenuItem.item.params);
+            // if we are now the active item reset the breadcrumbs and open all parent dropdown items
+            if(triMenuItem.item.active) {
+                triBreadcrumbsService.reset();
+                triBreadcrumbsService.addCrumb(triMenuItem.item);
+                $scope.$emit('openParents');
+            }
+        }
+
+        function toggleDropdownMenu() {
+            $scope.$parent.$parent.$broadcast('toggleDropdownMenu', triMenuItem.item, !triMenuItem.item.open);
+        }
+
+        function openLink() {
+            var params = angular.isUndefined(triMenuItem.item.params) ? {} : triMenuItem.item.params;
+            $state.go(triMenuItem.item.state, params);
+            triMenuItem.item.active = true;
+            $mdSidenav('left').close();
+        }
+    }
+    triMenuItemController.$inject = ["$scope", "$mdSidenav", "$state", "$filter", "triBreadcrumbsService"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .directive('triLoader', TriLoader);
+
+    /* @ngInject */
+    function TriLoader ($rootScope) {
+        var directive = {
+            bindToController: true,
+            controller: TriLoaderController,
+            controllerAs: 'vm',
+            template: '&lt;div flex class="loader" ng-show="vm.status.active" layout="column" layout-fill layout-align="center center">&lt;div class="loader-inner">&lt;md-progress-circular md-mode="indeterminate">&lt;/md-progress-circular>&lt;/div>&lt;h3 class="md-headline">{{vm.appName}}&lt;/h3>&lt;/div>',
+            link: link,
+            restrict: 'E',
+            replace: true,
+            scope: {
+            }
+        };
+        return directive;
+
+        function link($scope) {
+            var loadingListener = $rootScope.$on('$viewContentLoading', function() {
+                $scope.vm.setLoaderActive(true);
+            });
+
+            var loadedListener = $rootScope.$on('$viewContentLoaded', function() {
+                $scope.vm.setLoaderActive(false);
+            });
+
+            $scope.$on('$destroy', removeListeners);
+
+            function removeListeners() {
+                loadingListener();
+                loadedListener();
+            }
+        }
+    }
+    TriLoader.$inject = ["$rootScope"];
+
+    /* @ngInject */
+    function TriLoaderController ($rootScope, triLoaderService, triSettings) {
+        var vm = this;
+        vm.appName         = triSettings.name;
+        vm.status          = triLoaderService.status;
+        vm.setLoaderActive = triLoaderService.setLoaderActive;
+    }
+    TriLoaderController.$inject = ["$rootScope", "triLoaderService", "triSettings"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .service('triLoaderService', LoaderService);
+
+    /* @ngInject */
+    function LoaderService() {
+        var vm = this;
+
+        vm.status = {
+            active: true
+        };
+        vm.setLoaderActive = setLoaderActive;
+
+        ////////////////
+
+        function setLoaderActive(active) {
+            vm.status.active = active;
+        }
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .controller('FooterController', FooterController);
+
+    /* @ngInject */
+    function FooterController(triSettings, triLayout) {
+        var vm = this;
+        vm.name = triSettings.name;
+        vm.copyright = triSettings.copyright;
+        vm.layout = triLayout.layout;
+        vm.version = triSettings.version;
+    }
+    FooterController.$inject = ["triSettings", "triLayout"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.components')
+        .service('triBreadcrumbsService', BreadcrumbsService);
+
+    /* @ngInject */
+    function BreadcrumbsService() {
+        this.breadcrumbs = {
+            crumbs: []
+        };
+        this.addCrumb = addCrumb;
+        this.reset = reset;
+
+        ////////////////
+
+        function addCrumb(item) {
+            this.breadcrumbs.crumbs.unshift(item);
+        }
+
+        function reset() {
+            this.breadcrumbs.crumbs = [];
+        }
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.themes', [
+
+        ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.themes')
+        .provider('triTheming', themingProvider);
+
+    /* @ngInject */
+    function themingProvider($mdThemingProvider) {
+        var themes = {};
+
+        return {
+            theme: function(name) {
+                if(angular.isDefined(themes[name])) {
+                    return themes[name];
+                }
+
+                var theme = new Theme(name);
+
+                themes[name] = theme;
+
+                return themes[name];
+
+            },
+            $get: function() {
+                return {
+                    getTheme: function(themeName) {
+                        return themes[themeName];
+                    },
+                    getThemeHue: function(themeName, intentName, hue) {
+                        if(angular.isDefined($mdThemingProvider._THEMES[themeName]) &amp;&amp; angular.isDefined($mdThemingProvider._THEMES[themeName].colors[intentName])) {
+                            var palette = $mdThemingProvider._THEMES[themeName].colors[intentName];
+                            if(angular.isDefined($mdThemingProvider._PALETTES[palette.name]) &amp;&amp; angular.isDefined($mdThemingProvider._PALETTES[palette.name][palette.hues[hue]])) {
+                                return $mdThemingProvider._PALETTES[palette.name][palette.hues[hue]];
+                            }
+                        }
+                    },
+                    getPalette: function(name) {
+                        return $mdThemingProvider._PALETTES[name];
+                    },
+                    getPaletteColor: function(paletteName, hue) {
+                        if(angular.isDefined($mdThemingProvider._PALETTES[paletteName]) &amp;&amp; angular.isDefined($mdThemingProvider._PALETTES[paletteName][hue])) {
+                            return $mdThemingProvider._PALETTES[paletteName][hue];
+                        }
+                    },
+                    rgba: $mdThemingProvider._rgba,
+                    palettes: $mdThemingProvider._PALETTES,
+                    themes: $mdThemingProvider._THEMES,
+                    parseRules: $mdThemingProvider._parseRules
+                };
+            }
+        };
+    }
+    themingProvider.$inject = ["$mdThemingProvider"];
+
+    function Theme(name) {
+        var THEME_COLOR_TYPES = ['primary', 'accent', 'warn', 'background'];
+        var self = this;
+        self.name = name;
+        self.colors = {};
+        self.isDark = false;
+
+        THEME_COLOR_TYPES.forEach(function(colorType) {
+            self[colorType + 'Palette'] = function setPaletteType(paletteName, hues) {
+                self.colors[colorType] = {
+                    name: paletteName,
+                    hues: {}
+                };
+                if(angular.isDefined(hues)) {
+                    self.colors[colorType].hues = hues;
+                }
+                return self;
+            };
+        });
+
+        self.dark = function(isDark) {
+            // default setting when dark() is called is true
+            self.isDark = angular.isUndefined(isDark) ? true : isDark;
+        };
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.themes')
+        .provider('triSkins', skinsProvider)
+        .run(addSkinToScope);
+
+    /* @ngInject */
+    function skinsProvider($mdThemingProvider, triThemingProvider) {
+        var skins = {};
+        var currentSkin = null;
+        var useSkinCookie = false;
+
+        return {
+            skin: function(id, name) {
+                if(angular.isDefined(skins[id])) {
+                    return skins[id];
+                }
+
+                var skin = new Skin(id, name, $mdThemingProvider, triThemingProvider);
+
+                skins[id] = skin;
+
+                return skins[id];
+            },
+            setSkin: function(id) {
+                if(angular.isUndefined(skins[id])) {
+                    return;
+                }
+
+                // set skin to selected skin
+                currentSkin = skins[id];
+
+                // override the skin if cookie is enabled and has been set
+                if(useSkinCookie) {
+                    // we need to check cookies to see if skin has been saved so inject it
+                    var $cookies;
+                    angular.injector(['ngCookies']).invoke(['$cookies', function(cookies) {
+                        $cookies = cookies;
+                    }]);
+                    // if we have a cookie set then override the currentSkin
+                    var triangularSkin = $cookies.get('triangular-skin');
+                    if(angular.isDefined(triangularSkin)) {
+                        var cookieTheme = angular.fromJson(triangularSkin);
+                        currentSkin = angular.isDefined(skins[cookieTheme.skin]) ? skins[cookieTheme.skin] : skins[0];
+                    }
+                }
+
+                // make material load the themes needed for the skin
+                currentSkin.loadThemes();
+
+                return currentSkin;
+            },
+            useSkinCookie: function(skinCookie) {
+                useSkinCookie = skinCookie;
+            },
+            $get: function() {
+                return {
+                    getCurrent: function() {
+                        return currentSkin;
+                    },
+                    getSkins: function() {
+                        return skins;
+                    }
+                };
+            }
+        };
+    }
+    skinsProvider.$inject = ["$mdThemingProvider", "triThemingProvider"];
+
+    /* @ngInject */
+    function Skin(id, name, $mdThemingProvider, triThemingProvider) {
+        var THEMABLE_ELEMENTS = ['sidebar', 'logo', 'toolbar', 'content'];
+        var self = this;
+        self.id = id;
+        self.name = name;
+        self.elements = {};
+
+        THEMABLE_ELEMENTS.forEach(function(element) {
+            self[element + 'Theme'] = function setElementTheme(themeName) {
+                self.elements[element] = themeName;
+                return self;
+            };
+        });
+
+        self.loadThemes = function() {
+            // go through each element
+            for (var element in self.elements) {
+                // register theme with mdThemingProvider (will load css in the header)
+                var theme = triThemingProvider.theme(self.elements[element]);
+
+                $mdThemingProvider.theme(theme.name)
+                .primaryPalette(theme.colors.primary.name, theme.colors.primary.hues)
+                .accentPalette(theme.colors.accent.name, theme.colors.accent.hues)
+                .warnPalette(theme.colors.warn.name, theme.colors.warn.hues)
+                .dark(theme.isDark);
+
+                if(angular.isDefined(theme.colors.background)) {
+                    $mdThemingProvider
+                    .theme(theme.name)
+                    .backgroundPalette(theme.colors.background.name, theme.colors.background.hues);
+                }
+            }
+
+            $mdThemingProvider.setDefaultTheme(self.elements.content);
+        };
+    }
+    Skin.$inject = ["id", "name", "$mdThemingProvider", "triThemingProvider"];
+
+    /* @ngInject */
+    function addSkinToScope($rootScope, triSkins) {
+        $rootScope.triSkin = triSkins.getCurrent();
+    }
+    addSkinToScope.$inject = ["$rootScope", "triSkins"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.profiler', [
+            'digestHud'
+        ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.profiler')
+        .config(profilerConfig);
+
+    /* @ngInject */
+    function profilerConfig(digestHudProvider) {
+        digestHudProvider.enable();
+
+        // Optional configuration settings:
+        digestHudProvider.setHudPosition('top right'); // setup hud position on the page: top right, bottom left, etc. corner
+        digestHudProvider.numTopWatches = 20;  // number of items to display in detailed table
+        digestHudProvider.numDigestStats = 25;  // number of most recent digests to use f
+    }
+    profilerConfig.$inject = ["digestHudProvider"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular')
+        .run(layoutRunner)
+        .provider('triLayout', layoutProvider);
+
+    /* @ngInject */
+    function layoutProvider() {
+        var layoutDefaults = {
+            toolbarSize: 'default',
+            toolbarShrink: true,
+            toolbarClass: '',
+            contentClass: '',
+            innerContentClass: '',
+            sideMenuSize: 'full',
+            footer: true
+        };
+        var layout = {};
+
+        this.getDefaultOption = getDefaultOption;
+        this.setDefaultOption = setDefaultOption;
+
+        function getDefaultOption(name) {
+            return layoutDefaults[name];
+        }
+
+        function setDefaultOption(name, value) {
+            layoutDefaults[name] = value;
+        }
+
+        // init
+
+        angular.extend(layout, layoutDefaults);
+
+        // Service
+        this.$get = function() {
+            function setOption(name, value) {
+                layout[name] = value;
+            }
+
+            function updateLayoutFromState(event, toState) {
+                // reset classes
+                for(var option in layoutDefaults) {
+                    layout[option] = layoutDefaults[option];
+                }
+                var layoutOverrides = angular.isDefined(toState.data) &amp;&amp; angular.isDefined(toState.data.layout) ? toState.data.layout : {};
+                angular.extend(layout, layoutDefaults, layoutOverrides);
+            }
+
+            return {
+                layout: layout,
+                setOption: setOption,
+                updateLayoutFromState: updateLayoutFromState
+            };
+        };
+    }
+
+    /* @ngInject */
+    function layoutRunner($rootScope, triLayout) {
+        // check for $stateChangeStart and update the layouts if we have data.layout set
+        // if nothing set reset to defaults for every state
+        var destroyOn = $rootScope.$on('$stateChangeStart', triLayout.updateLayoutFromState);
+        $rootScope.$on('$destroy', removeWatch);
+
+        /////////////
+
+        function removeWatch() {
+            destroyOn();
+        }
+    }
+    layoutRunner.$inject = ["$rootScope", "triLayout"];
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.directives', [
+        ]);
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.directives')
+        .directive('themeBackground', themeBackground);
+
+    /* @ngInject */
+    function themeBackground($mdTheming, triTheming) {
+        // Usage:
+        // ```html
+        // &lt;div md-theme="cyan" theme-background="primary|accent|warn|background:default|hue-1|hue-2|hue-3">Coloured content&lt;/div>
+        // ```
+        // Creates:
+        //
+        var directive = {
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link($scope, $element, attrs) {
+            $mdTheming($element);
+
+            // make sure we have access to the theme - causes an eslint but nothing we can do about AM naming
+            var $mdTheme = $element.controller('mdTheme'); //eslint-disable-line
+            if(angular.isDefined($mdTheme)) {
+                var intent = attrs.themeBackground;
+                var hue = 'default';
+
+                // check if we have a hue provided
+                if(intent.indexOf(':') !== -1) {
+                    var splitIntent = attrs.themeBackground.split(':');
+                    intent = splitIntent[0];
+                    hue = splitIntent[1];
+                }
+                // get the color and apply it to the element
+                var color = triTheming.getThemeHue($mdTheme.$mdTheme, intent, hue);
+                if(angular.isDefined(color)) {
+                    $element.css({
+                        'background-color': triTheming.rgba(color.value),
+                        'border-color': triTheming.rgba(color.value),
+                        'color': triTheming.rgba(color.contrast)
+                    });
+                }
+            }
+        }
+    }
+    themeBackground.$inject = ["$mdTheming", "triTheming"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.directives')
+        .directive('triSamePassword', samePassword);
+
+    /* @ngInject */
+    function samePassword() {
+        // Usage:
+        //
+        // ```html
+        // &lt;form name="signup">
+        //     &lt;input name="password" type="password" ng-model="user.password" same-password="signup.confirm" />
+        //     &lt;input name="confirm" type="password" ng-model="user.confirm" same-password="signup.confirm" />
+        // &lt;/form>
+        // ```
+        // Creates:
+        //
+        // `samePassword` is a directive with the purpose to validate a password input based on the value of another input.
+        // When both input values are the same the inputs will be set to valid
+
+        var directive = {
+            restrict: 'A',
+            require: 'ngModel',
+            link: link,
+            scope: {
+                triSamePassword: '='
+            }
+        };
+        return directive;
+
+        function link(scope, element, attrs, ngModel) {
+            ngModel.$viewChangeListeners.push(function() {
+                ngModel.$setValidity('samePassword', scope.triSamePassword.$modelValue === ngModel.$modelValue);
+                scope.triSamePassword.$setValidity('samePassword', scope.triSamePassword.$modelValue === ngModel.$modelValue);
+            });
+        }
+    }
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.directives')
+        .directive('paletteBackground', paletteBackground);
+
+    /* @ngInject */
+    function paletteBackground(triTheming) {
+        // Usage:
+        // ```html
+        // &lt;div palette-background="green:500">Coloured content&lt;/div>
+        // ```
+        //
+        // Creates:
+        //
+        var directive = {
+            bindToController: true,
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link($scope, $element, attrs) {
+            var splitColor = attrs.paletteBackground.split(':');
+            var color = triTheming.getPaletteColor(splitColor[0], splitColor[1]);
+
+            if(angular.isDefined(color)) {
+                $element.css({
+                    'background-color': triTheming.rgba(color.value),
+                    'border-color': triTheming.rgba(color.value),
+                    'color': triTheming.rgba(color.contrast)
+                });
+            }
+        }
+    }
+    paletteBackground.$inject = ["triTheming"];
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular.directives')
+        .directive('countupto', countupto);
+
+    /* @ngInject */
+    function countupto($timeout) {
+        // Usage:
+        //
+        // ```html
+        // &lt;h1 countupto="100">&lt;/h1>
+        // ```
+        // Creates:
+        //
+        var directive = {
+            link: link,
+            restrict: 'A',
+            scope: {
+                'countupto': '=',
+                'options': '='
+            }
+        };
+        return directive;
+
+        function link($scope, $element, attrs) {
+            var options = {
+                useEasing: true,
+                useGrouping: true,
+                separator: ',',
+                decimal: '.',
+                prefix: '',
+                suffix: ''
+            };
+
+            // override default options?
+            if ($scope.options) {
+                for(var option in options) {
+                    if(angular.isDefined($scope.options[option])) {
+                        options[option] = $scope.options[option];
+                    }
+                }
+            }
+
+            attrs.from = angular.isUndefined(attrs.from) ? 0 : parseInt(attrs.from);
+            attrs.decimals = angular.isUndefined(attrs.decimals) ? 2 : parseFloat(attrs.decimals);
+            attrs.duration = angular.isUndefined(attrs.duration) ? 5 : parseFloat(attrs.duration);
+
+            $timeout(function() {
+                var numAnim = new CountUp($element[0], attrs.from, $scope.countupto, attrs.decimals, attrs.duration, options);
+                numAnim.start();
+            }, 500);
+        }
+    }
+    countupto.$inject = ["$timeout"];
+
+})();
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular')
+        .run(runFunction);
+
+    /* @ngInject */
+    function runFunction($rootScope, $window) {
+        // add a class to the body if we are on windows
+        if($window.navigator.platform.indexOf('Win') !== -1) {
+            $rootScope.bodyClasses = ['os-windows'];
+        }
+    }
+    runFunction.$inject = ["$rootScope", "$window"];
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular')
+        .provider('triSettings', settingsProvider);
+
+    /* @ngInject */
+    function settingsProvider() {
+        // Provider
+        var settings = {
+            languages: [],
+            name: '',
+            logo: '',
+            copyright: '',
+            version: ''
+        };
+
+        this.addLanguage = addLanguage;
+        this.setLogo = setLogo;
+        this.setName = setName;
+        this.setCopyright = setCopyright;
+        this.setVersion = setVersion;
+
+        function addLanguage(newLanguage) {
+            settings.languages.push(newLanguage);
+        }
+
+        function setLogo(logo) {
+            settings.logo = logo;
+        }
+
+        function setName(name) {
+            settings.name = name;
+        }
+
+        function setCopyright(copy) {
+            settings.copyright = copy;
+        }
+
+        function setVersion(version) {
+            settings.version = version;
+        }
+
+        // Service
+        this.$get = function() {
+            return {
+                languages: settings.languages,
+                name: settings.name,
+                copyright: settings.copyright,
+                logo: settings.logo,
+                version: settings.version,
+                defaultSkin: settings.defaultSkin
+            };
+        };
+    }
+})();
+
+
+(function() {
+    'use strict';
+
+    angular
+        .module('triangular')
+        .config(routeConfig);
+
+    /* @ngInject */
+    function routeConfig($stateProvider) {
+        $stateProvider
+        .state('triangular', {
+            abstract: true,
+            templateUrl: 'app/triangular/layouts/default.tmpl.html',
+            controller: 'DefaultLayoutController',
+            controllerAs: 'layoutController'
+        })
+        .state('triangular-no-scroll', {
+            abstract: true,
+            templateUrl: 'app/triangular/layouts/default/default-no-scroll.tmpl.html',
+            controller: 'DefaultLayoutController',
+            controllerAs: 'layoutController'
+        })
+        .state('triangular.admin-default', {
+            abstract: true,
+            views: {
+                sidebarLeft: {
+                    templateUrl: 'app/triangular/components/menu/menu.tmpl.html',
+                    controller: 'MenuController',
+                    controllerAs: 'vm'
+                },
+                sidebarRight: {
+                    templateUrl: 'app/triangular/components/notifications-panel/notifications-panel.tmpl.html',
+                    controller: 'NotificationsPanelController',
+                    controllerAs: 'vm'
+                },
+                toolbar: {
+                    templateUrl: 'app/triangular/components/toolbars/toolbar.tmpl.html',
+                    controller: 'DefaultToolbarController',
+                    controllerAs: 'vm'
+                },
+                content: {
+                    template: '&lt;div id="admin-panel-content-view" class="{{layout.innerContentClass}}" flex ui-view>&lt;/div>'
+                },
+                belowContent: {
+                    template: '&lt;div ui-view="belowContent">&lt;/div>'
+                }
+            }
+        })
+        .state('triangular.admin-default-no-scroll', {
+            abstract: true,
+            views: {
+                sidebarLeft: {
+                    templateUrl: 'app/triangular/components/menu/menu.tmpl.html',
+                    controller: 'MenuController',
+                    controllerAs: 'vm'
+                },
+                sidebarRight: {
+                    templateUrl: 'app/triangular/components/notifications-panel/notifications-panel.tmpl.html',
+                    controller: 'NotificationsPanelController',
+                    controllerAs: 'vm'
+                },
+                toolbar: {
+                    templateUrl: 'app/triangular/components/toolbars/toolbar.tmpl.html',
+                    controller: 'DefaultToolbarController',
+                    controllerAs: 'vm'
+                },
+                content: {
+                    template: '&lt;div flex ui-view layout="column" class="overflow-hidden">&lt;/div>'
+                }
+            }
+        });
+    }
+    routeConfig.$inject = ["$stateProvider"];
+})();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="-_anonymous_-SailsIOClient-JWR.html">JWR</a></li><li><a href="-_anonymous_-SailsIOClient-TmpSocket.html">TmpSocket</a></li></ul><h3>Global</h3><ul><li><a href="global.html#triAngular">triAngular</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Dec 10 2015 15:50:03 GMT+0200 (GTB Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

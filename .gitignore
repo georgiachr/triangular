@@ -28,10 +28,10 @@ build/Release
 node_modules
 
 # bower
-/config/end/production/connections.js
-/config/end/development/connections.js
-/config/end/production/globals.js
-/config/end/development/globals.js
+/config/env/production/connections.js
+/config/env/development/connections.js
+/config/env/production/globals.js
+/config/env/development/globals.js
 bower_components
 
 # Optional npm cache directory

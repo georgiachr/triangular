@@ -29,6 +29,7 @@
                     controller: 'NotificationsPanelController',
                     controllerAs: 'vm'
                 },
+                //TOOLBAR:
                 toolbar: {
                     templateUrl: 'templates/components/toolbars/toolbar.tmpl.html',
                     controller:  'TopToolbarController',//'DefaultToolbarController',

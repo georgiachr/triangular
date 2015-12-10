@@ -37,8 +37,8 @@ module.exports = function(grunt) {
 	}
 
 	grunt.initConfig({
-	});
 
+	});
 
 	/**
 	 * Loads Grunt configuration modules from the specified

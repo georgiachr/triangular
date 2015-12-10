@@ -27,8 +27,8 @@
 
         // initialize (create blank user variable for login form)
         vm.user = {
-            email: 'g@g.com',
-            password: 'qwe'
+            email: '',
+            password: ''
         };
 
         ////////////////
@@ -42,27 +42,6 @@
         function userLoginRequest (){
 
             $http.put('/loginuser', {
-                email: vm.user.email,
-                password: vm.user.password
-            })
-                .then(function onSuccess (responseData){
-                    var data = angular.fromJson(responseData)['data'];
-
-
-                    useridentity.loginUser(data);
-
-                })
-                .catch(function onError(sailsResponse) {
-                    console.log("SIGN-IN onError "+JSON.stringify(sailsResponse));
-
-                })
-                .finally(function eitherWay(){
-                });
-        }
-
-        function userLogoutRequest (){
-
-            $http.put('/logoutuser', {
                 email: vm.user.email,
                 password: vm.user.password
             })

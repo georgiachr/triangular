@@ -1,8 +1,13 @@
+//TODO: change title to role
 /**
  * Created by georgia.chr on 21-Sep-15.
+ *
+ * @module isAdmin
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
  */
-
-//TODO: change title to role
 module.exports = function (req, res, next) {
 
   var userRole = (req.param('requestedUserRole'));
