@@ -1,0 +1,162 @@
+Included jsdocs. Completed tokens. Completed logout.
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#	modified:   .gitignore
+#	modified:   .idea/workspace.xml
+#	modified:   Gruntfile.js
+#	modified:   api/controllers/AuthController.js
+#	modified:   api/controllers/FileController.js
+#	modified:   api/policies/isAdmin.js
+#	modified:   client/app/app.module.js
+#	modified:   client/app/config/app.config.route.js
+#	modified:   client/app/modules/authentication/authentication.config.js
+#	modified:   client/app/modules/authentication/controllers/AuthenticationController.js
+#	modified:   client/app/modules/authentication/controllers/LoginController.js
+#	new file:   client/app/modules/authentication/controllers/LogoutController.js
+#	modified:   client/index.html
+#	modified:   client/templates/components/toolbars/toolbar.tmpl.html
+#	new file:   client/templates/layouts/welcome-to-app.tmpl.html
+#	new file:   config/env/development/blueprints.js
+#	new file:   config/env/development/bootstrap.js
+#	new file:   config/env/development/cors.js
+#	new file:   config/env/development/csrf.js
+#	new file:   config/env/development/http.js
+#	new file:   config/env/development/i18n.js
+#	new file:   config/env/development/local.js
+#	new file:   config/env/development/log.js
+#	new file:   config/env/development/models.js
+#	new file:   config/env/development/policies.js
+#	new file:   config/env/development/routes.js
+#	new file:   config/env/development/session.js
+#	new file:   config/env/development/sockets.js
+#	new file:   config/env/development/views.js
+#	new file:   config/env/production/blueprints.js
+#	new file:   config/env/production/bootstrap.js
+#	new file:   config/env/production/cors.js
+#	new file:   config/env/production/csrf.js
+#	new file:   config/env/production/http.js
+#	new file:   config/env/production/i18n.js
+#	new file:   config/env/production/local.js
+#	new file:   config/env/production/log.js
+#	new file:   config/env/production/models.js
+#	new file:   config/env/production/policies.js
+#	new file:   config/env/production/routes.js
+#	new file:   config/env/production/session.js
+#	new file:   config/env/production/sockets.js
+#	new file:   config/env/production/views.js
+#	new file:   docs-api/controllers_AuthController.js.html
+#	new file:   docs-api/controllers_FileController.js.html
+#	new file:   docs-api/controllers_UserController.js.html
+#	new file:   docs-api/fonts/OpenSans-Bold-webfont.eot
+#	new file:   docs-api/fonts/OpenSans-Bold-webfont.svg
+#	new file:   docs-api/fonts/OpenSans-Bold-webfont.woff
+#	new file:   docs-api/fonts/OpenSans-BoldItalic-webfont.eot
+#	new file:   docs-api/fonts/OpenSans-BoldItalic-webfont.svg
+#	new file:   docs-api/fonts/OpenSans-BoldItalic-webfont.woff
+#	new file:   docs-api/fonts/OpenSans-Italic-webfont.eot
+#	new file:   docs-api/fonts/OpenSans-Italic-webfont.svg
+#	new file:   docs-api/fonts/OpenSans-Italic-webfont.woff
+#	new file:   docs-api/fonts/OpenSans-Light-webfont.eot
+#	new file:   docs-api/fonts/OpenSans-Light-webfont.svg
+#	new file:   docs-api/fonts/OpenSans-Light-webfont.woff
+#	new file:   docs-api/fonts/OpenSans-LightItalic-webfont.eot
+#	new file:   docs-api/fonts/OpenSans-LightItalic-webfont.svg
+#	new file:   docs-api/fonts/OpenSans-LightItalic-webfont.woff
+#	new file:   docs-api/fonts/OpenSans-Regular-webfont.eot
+#	new file:   docs-api/fonts/OpenSans-Regular-webfont.svg
+#	new file:   docs-api/fonts/OpenSans-Regular-webfont.woff
+#	new file:   docs-api/global.html
+#	new file:   docs-api/index.html
+#	new file:   docs-api/models_File.js.html
+#	new file:   docs-api/models_User.js.html
+#	new file:   docs-api/module-AuthControllers.html
+#	new file:   docs-api/module-FileController.html
+#	new file:   docs-api/module-__%20Policy.html
+#	new file:   docs-api/module-isAdmin.html
+#	new file:   docs-api/policies_isAdmin.js.html
+#	new file:   docs-api/policies_isTokenAuthorized.js.html
+#	new file:   docs-api/policies_sessionAuth.js.html
+#	new file:   docs-api/responses_badRequest.js.html
+#	new file:   docs-api/responses_forbidden.js.html
+#	new file:   docs-api/responses_notFound.js.html
+#	new file:   docs-api/responses_ok.js.html
+#	new file:   docs-api/responses_serverError.js.html
+#	new file:   docs-api/scripts/linenumber.js
+#	new file:   docs-api/scripts/prettify/Apache-License-2.0.txt
+#	new file:   docs-api/scripts/prettify/lang-css.js
+#	new file:   docs-api/scripts/prettify/prettify.js
+#	new file:   docs-api/services_jwtToken.js.html
+#	new file:   docs-api/styles/jsdoc-default.css
+#	new file:   docs-api/styles/prettify-jsdoc.css
+#	new file:   docs-api/styles/prettify-tomorrow.css
+#	new file:   docs-client/-_anonymous_-SailsIOClient-JWR.html
+#	new file:   docs-client/-_anonymous_-SailsIOClient-TmpSocket.html
+#	new file:   docs-client/app.module.js.html
+#	new file:   docs-client/dependencies_sails.io.js.html
+#	new file:   docs-client/dependencies_triangular.js.html
+#	new file:   docs-client/fonts/OpenSans-Bold-webfont.eot
+#	new file:   docs-client/fonts/OpenSans-Bold-webfont.svg
+#	new file:   docs-client/fonts/OpenSans-Bold-webfont.woff
+#	new file:   docs-client/fonts/OpenSans-BoldItalic-webfont.eot
+#	new file:   docs-client/fonts/OpenSans-BoldItalic-webfont.svg
+#	new file:   docs-client/fonts/OpenSans-BoldItalic-webfont.woff
+#	new file:   docs-client/fonts/OpenSans-Italic-webfont.eot
+#	new file:   docs-client/fonts/OpenSans-Italic-webfont.svg
+#	new file:   docs-client/fonts/OpenSans-Italic-webfont.woff
+#	new file:   docs-client/fonts/OpenSans-Light-webfont.eot
+#	new file:   docs-client/fonts/OpenSans-Light-webfont.svg
+#	new file:   docs-client/fonts/OpenSans-Light-webfont.woff
+#	new file:   docs-client/fonts/OpenSans-LightItalic-webfont.eot
+#	new file:   docs-client/fonts/OpenSans-LightItalic-webfont.svg
+#	new file:   docs-client/fonts/OpenSans-LightItalic-webfont.woff
+#	new file:   docs-client/fonts/OpenSans-Regular-webfont.eot
+#	new file:   docs-client/fonts/OpenSans-Regular-webfont.svg
+#	new file:   docs-client/fonts/OpenSans-Regular-webfont.woff
+#	new file:   docs-client/global.html
+#	new file:   docs-client/index.html
+#	new file:   docs-client/module-hi.html
+#	new file:   docs-client/sails.io.js.html
+#	new file:   docs-client/scripts/linenumber.js
+#	new file:   docs-client/scripts/prettify/Apache-License-2.0.txt
+#	new file:   docs-client/scripts/prettify/lang-css.js
+#	new file:   docs-client/scripts/prettify/prettify.js
+#	new file:   docs-client/styles/jsdoc-default.css
+#	new file:   docs-client/styles/prettify-jsdoc.css
+#	new file:   docs-client/styles/prettify-tomorrow.css
+#	new file:   docs-client/triangular.js.html
+#	modified:   package.json
+#	new file:   tasks/config/jsdocs.js
+#	modified:   tasks/register/compileAssets.js
+#
+# Changes not staged for commit:
+#	deleted:    config/end/development/blueprints.js
+#	deleted:    config/end/development/bootstrap.js
+#	deleted:    config/end/development/cors.js
+#	deleted:    config/end/development/csrf.js
+#	deleted:    config/end/development/http.js
+#	deleted:    config/end/development/i18n.js
+#	deleted:    config/end/development/local.js
+#	deleted:    config/end/development/log.js
+#	deleted:    config/end/development/models.js
+#	deleted:    config/end/development/policies.js
+#	deleted:    config/end/development/routes.js
+#	deleted:    config/end/development/session.js
+#	deleted:    config/end/development/sockets.js
+#	deleted:    config/end/development/views.js
+#	deleted:    config/end/production/blueprints.js
+#	deleted:    config/end/production/bootstrap.js
+#	deleted:    config/end/production/cors.js
+#	deleted:    config/end/production/csrf.js
+#	deleted:    config/end/production/http.js
+#	deleted:    config/end/production/i18n.js
+#	deleted:    config/end/production/local.js
+#	deleted:    config/end/production/log.js
+#	deleted:    config/end/production/models.js
+#	deleted:    config/end/production/policies.js
+#	deleted:    config/end/production/routes.js
+#	deleted:    config/end/production/session.js
+#	deleted:    config/end/production/sockets.js
+#	deleted:    config/end/production/views.js
+#
