@@ -1,0 +1,12 @@
+
+/*
+ defined in angular-material.min.css as
+ top: -2px
+ Do not have an idea why is that shit happenning
+ Solved it.
+*/
+md-input-container label {
+    position: relative;
+    top: -30px;
+}
+

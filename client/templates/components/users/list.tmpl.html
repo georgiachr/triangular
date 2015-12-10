@@ -1,0 +1,79 @@
+<!--
+<div class="padded-content-page">
+-->
+<div layout="column" layout-align="center center" class="full-image-background mb-bg-fb-07 overlay-40">
+
+    <div layout="row" layout-align="center center">
+
+        <p flex="70"  flex-sm="90" class="md-headline font-weight-300 text-center text-light" ></p>
+
+    </div>
+
+    <div flex layout="row" layout-align="center center" layout-fill>
+        <div flex="80" class="md-whiteframe-z1 margin-bottom-100" layout="column" >
+
+
+            <md-toolbar class="md-primary">
+                <div flex class="md-toolbar-tools" layout="row" layout-align="space-between center">
+                    <h2>List of users!</h2>
+                </div>
+                <md-progress-linear class="md-accent padding-bottom-10" md-mode="determinate" ></md-progress-linear>
+            </md-toolbar>
+
+            <!--
+            <md-data-table-toolbar ng-hide="vm.selected.length || vm.filter.show">
+                <h2 class="md-title">List of Users!</h2>
+                <div flex></div>
+                <md-button class="md-icon-button" ng-click="vm.filter.show = true">
+
+                    <md-icon md-font-icon="zmdi zmdi-filter-list"></md-icon>
+                </md-button>
+            </md-data-table-toolbar>
+
+            <md-data-table-toolbar ng-show="vm.filter.show && !vm.selected.length" class="md-data-table-toolbar">
+                <md-icon md-font-icon="zmdi zmdi-search"></md-icon>
+                <form flex="" name="vm.filter.form">
+                    <input type="text" ng-model="vm.query.filter" ng-model-options="vm.filter.options" placeholder="search">
+                </form>
+                <md-button class="md-icon-button" ng-click="vm.removeFilter()">
+                    <md-icon md-font-icon="zmdi zmdi-close"></md-icon>
+                </md-button>
+            </md-data-table-toolbar>
+
+
+            <md-data-table-toolbar class="alternate" ng-show="vm.selected.length" layout-align="space-between">
+                <div>{{vm.selected.length}} {{vm.selected.length > 1 ? 'users' : 'user'}} selected</div>
+            </md-data-table-toolbar>
+
+
+            <md-data-table-container>
+                <table md-data-table class="md-primary md-data-table" md-row-select="vm.selected" md-progress="vm.deferred">
+                    <thead md-order="vm.query.order" md-trigger="vm.getUsers">
+                    <tr>
+                        <th name="avatar"></th>
+                        <th name="login"></th>
+                        <th order-by="id" name="ID"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr md-auto-select ng-repeat="user in vm.users.items">
+                        <td><a href="{{::user.html_url}}"><img ng-src="{{::user.avatar_url}}"/></a></td>
+                        <td>{{::user.login}}</td>
+                        <td>{{::user.id}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-data-table-container>
+             -->
+
+            <tri-table style="background-color: white;"
+                       class="elements-image-table-example"
+                       columns="::vm.columns"
+                       contents="::vm.contents"
+                       page-size="5">
+
+            </tri-table>
+
+        </div>
+    </div>
+</div>
