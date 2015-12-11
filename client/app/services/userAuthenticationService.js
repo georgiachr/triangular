@@ -38,10 +38,25 @@
                         useremail: data.user['email'],
                         token: data.user['token']
                     });
-            }
-            ,
+            },
+            /**
+             * Get cookie from client (user's valid token)
+             * @returns {Object}
+             */
             getCookie: function getCookie() {
                 return $cookies.getObject("userToken");
+            },
+            getUserName: function getUserName() {
+                return this.userName;
+            },
+            getUserId: function getUserId() {
+                return this.userID;
+            },
+            getUserRole: function getUserRole() {
+                return this.userRole;
+            },
+            getUserStatus: function getUserStatus() {
+                return this.userStatus;
             }
             ,
             loginUser: function loginUser(data) {
@@ -54,16 +69,16 @@
             logoutUser: function logoutUser() {
                 this.userStatus = false;
                 this.reset();
+                this.userConfigHeaders = null;
             },
 
             reset: function reset() {
-                this.userToken = null,
-                    this.userID = null,
-                    this.userName = null;
-                this.userRole = null,
-                    this.userConfigHeaders = null
+                this.userToken = null;
+                this.userID = null;
+                this.userName = null;
+                this.userRole = null;
+                this.userEmail = null
             },
-
             isLogin: function isLogin() {
                 return this.status;
             },
@@ -71,9 +86,15 @@
                 this.status = true;
             },
 
+            /**
+             * et default headers for session's AJAX calls
+             */
             setHeader: function setHeaders() {
 
+                //$httpProvider.defaults.headers.common (headers that are common for all requests):
+                //The defaults can also be set at runtime via the $http.defaults object in the same fashion
                 $http.defaults.headers.common['X-Auth-Token'] = this.userToken;
+                console.log('headers default ready!');
                 //set the X-AUTH-TOKEN
 
             },

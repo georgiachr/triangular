@@ -42,8 +42,8 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/pranav/app.git"
+    "url": "https://github.com/georgiachr/app-based-on-md"
   },
-  "author": "pranav",
-  "license": ""
+  "author": "Georgia Christodoulou",
+  "license": "NONE"
 }

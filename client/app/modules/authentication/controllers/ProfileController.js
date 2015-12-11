@@ -6,8 +6,11 @@
         .controller('ProfileController', ProfileController);
 
     /* @ngInject */
-    function ProfileController() {
+    function ProfileController($scope,useridentity,$http) {
         var vm = this;
+
+        $scope.useridentity = useridentity;
+
         vm.settingsGroups = [{
             name: 'ADMIN.NOTIFICATIONS.ACCOUNT_SETTINGS',
             settings: [{
@@ -39,16 +42,16 @@
                 enabled: true
             }]
         }];
+
         vm.user = {
-            name: 'Christos',
-            email: 'info@oxygenna.com',
+            name: $scope.useridentity.userName,
+            email: $scope.useridentity.userEmail,
             location: 'Sitia, Crete, Greece',
-            website: 'http://www.oxygenna.com',
-            twitter: 'oxygenna',
-            bio: 'We are a small creative web design agency \n who are passionate with our pixels.',
+            bio: 'Hello is georgia ..... .',
             current: '',
             password: '',
             confirm: ''
         };
     }
+    ProfileController.$inject = ['$scope','useridentity','$http'];
 })();

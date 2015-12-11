@@ -301,42 +301,62 @@ module.exports = {
 
   },
 
-  /**
-   * Check the provided email address and password, and if they
-   * match a real user in the database, sign in to Activity Overlord.
-   */
-  validateUserToken: function (req, res) {
+    /**OK
+     * Validate user using an email
+     * isTokenAuthorized policy called before this action starts.
+     * isUserTokenValid called before this action begins (search for user and compares tokens)
+     * @param req {String} User email and token
+     * @param res
+     */
+    loginExistedUser: function (req, res) {
 
-    req.validate({
-      email: 'string',
-      token: 'string'
-    });
+        console.log('loginExistedUser API');
 
-    // Try to look up user using the provided email address
-    User.findOne({
-      email: req.param('email')
-    }, function foundUser(err, user) {
-      if (err) {console.log("negotiate error");return res.negotiate(err)};
-      if (!user) {console.log("not user");return res.notFound();}
+        //Check if req params are correctly defined
+        req.validate({
+          email: 'string',
+          token: 'string'
+        });
 
-      //console.log("user:" + user.token);
-      //console.log("param token:" + req.param('token'));
+        //Look up for the user using the provided email address
+        User.findOne({
+          email: req.param('email')
+        },function foundUser(err, user) {
 
-      if(user.token == req.param('token')) {
-        res.json(200, {user: user});
-      }
+            if (err) {
+                console.log("loginExistedUser: negotiate error");
+                return res.negotiate(err);
+            }
 
-      return res.notFound();
+            if (!user){
+                console.log("loginExistedUser: No user found");
+                return res.notFound();
+            }
+            else { //if user exists
+                return res.json(200, {user: user});
 
-    });
+            }
+        }); //User.findOne
+
   },
 
 
-  /**
+    test: function (req, res) {
+
+        if (req.headers) {
+            console.log(req.headers);
+        }
+
+        return res.ok();
+
+    },
+
+
+  /**OK
    * Check the provided email address and password, and if they
    * match a real user in the database, sign in to Activity Overlord.
    */
-  loginuser: function (req, res) {
+  login: function (req, res) {
 
     req.validate({
       email: 'string',
@@ -401,66 +421,51 @@ module.exports = {
   },
 
 
-  /**
+  /**OK
    * Log out
-   * (wipes `me` from the sesion)
+   * (wipes `me` from the session)
    */
   logout: function (req, res) {
 
-    var header_token = null;
+    console.log("Logout API");
 
+    var header_token = null;
 
     if (req.headers) {
 
-      /*
-       var parts = req.headers.authorization.split(' ');
-       if (parts.length == 2) {
-       var scheme = parts[0],
-       credentials = parts[1];
-       */
+        if (header_token === undefined) {
+            return res.json(401, {err: 'No Authorization header was found'});
+        }
+        else {
 
+            User.findOne({
+               id: req.param('id')
+            }, function foundUser(err, user) {
 
-      header_token = req.headers["x-auth-token"];
+              if (err) {
+                console.log("Logout: Error find user!");
+                return res.negotiate(err);
+              }
 
-      if (header_token === undefined) {
-        console.log("token undefined");
-        return res.json(401, {err: 'No Authorization header was found'});
+              if (user) {
+
+                User.update(user.id, {token: ""},function (err, updated) {
+                      if (err) return res.negotiate(err);
+
+                      if (updated) {
+                        res.json(200);
+                      }
+                });
+
+              }
+              else { //user not found
+                console.log("Logout: User not found!");
+                return res.notFound();
+              }
+
+            }); //User.findOne
+          }
       }
-
-
-      // check token is valid
-      jwtToken.verifyToken(header_token,function(err, token) {
-        if (err)
-          return res.json(401, {err: 'The token is not valid'});
-
-        decoded = jwtToken.decodeToken(header_token,{complete:true});
-        console.log(JSON.stringify(decoded));
-        userid = decoded.payload.userid;
-
-        User.findOne({
-          id: userid
-        },function foundUser(err, user){
-          if (err) {console.log("negotiate error");return res.negotiate(err)};
-          if (!user) {console.log("not user");return res.notFound();}
-
-
-          User.update(user.id, {token: ""},
-            function(err) {
-              if (err) return res.negotiate(err);
-
-              // Store user id in the user session
-              //req.session.me = user.id;
-
-              // All done- let the client know that everything worked.
-              //console.log(JSON.stringify(user));
-              //return res.ok();
-
-              // res.json([statusCode, ... ] data);
-              res.json(200);
-            });
-        });
-      });
-    };
   },
 
   /**
@@ -890,7 +895,7 @@ module.exports = {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Dec 10 2015 15:51:57 GMT+0200 (GTB Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Dec 11 2015 14:51:35 GMT+0200 (GTB Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -8,7 +8,7 @@
         .module('app')
         // create a constant for languages so they can be added to both triangular & translate
         .run(function($state){
-            $state.go('authentication.home', {reload: true, inherit: false});
+            $state.go('authentication-home', {reload: true, inherit: false});
 
 
         })

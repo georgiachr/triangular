@@ -23,7 +23,7 @@
         vm.toggleNotificationsTab = toggleNotificationsTab;
 
         // initToolbar();
-        vm.userProfile = {name: $scope.useridentity.userName};
+        vm.userProfile = {name: $scope.useridentity.getUserName()};
 
         ////////////////
 

@@ -15,24 +15,25 @@
         $translatePartialLoaderProvider.addPart('app/il8n/authentication');
 
         $stateProvider
-            .state('authentication', {
+            .state('authentication', { //NOT USED
                 abstract: true,
-                templateUrl: 'templates/components/authentication/authentication.tmpl.html',
+                //templateUrl: 'templates/components/authentication/authentication.tmpl.html',
                 controller: 'AuthenticationController'
             })
-            .state('authentication.home', {
+            .state('authentication-home', {
                 //templateUrl: 'templates/components/layout/welcome-to-app.tmpl.html'
+                controller: 'AuthenticationController'
             })
-            .state('authentication.logout', {
+            .state('authentication-logout', {
                 controller: 'LogoutController',
                 controllerAs: 'vm'
             })
-            .state('authentication.profile', {
+            .state('dashboard.admin.profile', {
                 templateUrl: 'templates/components/authentication/profile.tmpl.html',
                 controller: 'ProfileController',
                 controllerAs: 'vm'
             })
-            .state('authentication.login', {
+            .state('authentication-login', {
                 templateUrl: 'templates/components/authentication/login.tmpl.html',
                 controller: 'LoginController',
                 controllerAs: 'vm'

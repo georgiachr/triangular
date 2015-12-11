@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: policies/isAdmin.js</title>
+    <title>JSDoc: Source: policies/isUserTokenValid.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: policies/isAdmin.js</h1>
+    <h1 class="page-title">Source: policies/isUserTokenValid.js</h1>
 
     
 
@@ -26,28 +26,64 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>//TODO: change title to role
+            <pre class="prettyprint source linenums"><code>/**
+ * Created by georgia.chr on 11-Dec-15.
+ */
+
 /**
- * Created by georgia.chr on 21-Sep-15.
- *
- * @module isAdmin
+ * Supposed that token is authorized (isTokenAuthorized).
  * @param req
  * @param res
  * @param next
- * @returns {*}
  */
 module.exports = function (req, res, next) {
 
-  var userRole = (req.param('requestedUserRole'));
+    console.log("isUserTokenValid POLICY!");
 
-  if ( userRole != 'Administrator')
-  {
-    console.log("isAdmin policy: negotiate error");
+    var header_token;
+    var useridFromHeader;
+    var decoded;
 
-    return res.forbidden();
-  };
+    if (req.headers) {
 
-  next();
+        if (req.headers["x-auth-token"] === undefined) {
+            return res.json(401, {err: 'isUserTokenValid: No Authorization header was found'});
+        }
+        else {
+            //taken from isTokenAuthorized
+            header_token = req.headers["x-auth-token"];
+
+            decoded = jwtToken.decodeToken(header_token, {complete: true});
+
+            useridFromHeader = decoded.payload.userid;
+
+            User.findOne({
+                id: useridFromHeader
+            }, function foundUser(err, user) {
+
+                if (err) {
+                    console.log("isUserTokenValid: Found user error!");
+                    return res.negotiate(err);
+                }
+
+                if (!user) {
+                    console.log("isUserTokenValid: No user found!");
+                    return res.notFound();
+                }
+                else {
+                    if (user.token != header_token) {
+                        console.log("isUserTokenValid: User's token is not valid or it has expired!");
+                        return res.json(401, {err: 'isUserTokenValid: The token is not valid'});
+                    }
+                    else
+                        next();
+                }
+
+            });
+
+        }
+
+    } // if (req.headers)
 
 };
 </code></pre>

@@ -27,46 +27,57 @@
         //functions
         vm.logoutClick = logoutClick;
         vm.userLogoutRequest = userLogoutRequest;
-        vm.changeStateAfterLogout = changeStateAfterLogout;
+        vm.changeStates = changeStates;
+
+        //calls
+        vm.logoutClick();
 
         ////////////////
 
         function logoutClick()
         {
-            vm.userLogoutRequest();
-            vm.changeStateAfterLogout();
+            if ($scope.useridentity.getUserStatus())
+                vm.userLogoutRequest();
         }
 
         function userLogoutRequest (){
 
-            $http.get('/logout')
+            $http.post('/logout',{
+                id: $scope.useridentity.getUserId()
+            })
                 .then(function onSuccess(responseData) {
 
+                    //clear user data from useridentity service
+                    $scope.useridentity.logoutUser();
+
+                    //go back to login page
+                    vm.changeStates();
                 })
                 .catch(function onError(sailsResponse) {
 
                     // called asynchronously if an error occurs
                     // or server returns response with an error status.
+                    console.log("in catch  logout");
 
                 })
                 .finally(function eitherWay() {
 
-                    //clear user data from useridentity service
-                    $scope.useridentity.logoutUser();
+
                 });
 
         }
 
 
-        function changeStateAfterLogout (){
+        function changeStates (){
 
             //authentication.login will first call authentication state (abstract)
             //to verify that there is no token saved
             //then it will automatically go to authentication.login
-            $state.go('authentication.login');
+
+            $state.go('authentication-login');
         }
 
-        vm.logoutClick();
+
 
     }
 
