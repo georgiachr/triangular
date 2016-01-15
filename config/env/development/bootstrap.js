@@ -11,7 +11,18 @@
 
 module.exports.bootstrap = function(cb) {
 
+  var Promise = require('bluebird');
+
   // It's very important to trigger this callack method when you are finished
   // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
+
+  Object.keys(sails.models).forEach(function (key) {
+    if (sails.models[key].query) {
+      sails.models[key].query = Promise.promisify(sails.models[key].query);
+    }
+  });
+
+
+
   cb();
 };

@@ -26,7 +26,7 @@ module.exports.issueToken = function(payload) {
 
   var token =
       jwt.sign(
-        payload,
+        payload, //userid
         process.env.TOKEN_SECRET || sails.config.globals.tokensalt,
         {
           expirationInMinutes: sails.config.globals.tokenExpirationInMinutes

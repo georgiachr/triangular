@@ -1,0 +1,33 @@
+<!-- there is top,bottom,right,left padding
+<div class="padded-content-page">
+-->
+<div layout="column" layout-align="center center" class="full-image-background mb-bg-fb-07 overlay-40">
+
+    <!-- small div area before md-card or any other content starts -->
+    <div layout="row" layout-align="center center">
+
+        <p flex="70"  flex-sm="90" class="md-headline font-weight-300 text-center text-light" ></p>
+
+    </div>
+
+    <div flex layout="row" layout-align="center center" layout-fill>
+
+        <!--
+        <div flex="80" class="md-whiteframe-z1 margin-bottom-100" layout="column" style="background-color: white">
+
+
+        </div>
+        -->
+
+        <div layout="row" layout-sm="column" layout-margin>
+            <tri-widget chartjs-line-widget title="DASHBOARDS.ANALYTICS.PAGEVIEWS" subtitle="DASHBOARDS.ANALYTICS.DATE" content-layout="row" content-padding>
+                <canvas class="chart-line" chart-data="lineChart.data" chart-labels="lineChart.labels" chart-legend="true" chart-series="lineChart.series" chart-options="lineChart.options"></canvas>
+            </tri-widget>
+            <tri-widget chartjs-pie-widget title="DASHBOARDS.ANALYTICS.SOCIAL" subtitle="DASHBOARDS.ANALYTICS.DATE" content-padding>
+                <canvas class="chart-doughnut" chart-data="pieChart.data" chart-legend="true" chart-labels="pieChart.labels"></canvas>
+            </tri-widget>
+        </div>
+
+        </div>
+    </div>
+</div>

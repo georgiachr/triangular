@@ -1,0 +1,61 @@
+<!--
+<div layout="row">
+    <md-button ng-click="vm.changeVideoSearchOptions($event)" class="md-fab md-accent md-fab-top-right" aria-label="video options">
+        <md-icon md-font-icon="zmdi zmdi-calendar-alt"></md-icon>
+    </md-button>
+</div>
+-->
+
+<div class="video-statistics" layout="column">
+
+    <div layout="row" layout-sm="column" layout-margin>
+        <tri-widget flex title="Videos Videos">
+            <md-data-table-container>
+                <table md-data-table class="md-data-table" md-progress="vm.deferred">
+                    <thead md-order="vm.query.order" md-trigger="vm.getUsers">
+                    <tr>
+                        <th name="Date" order-by="date" decend-first></th>
+                        <th name="Buyer" order-by="buyer"></th>
+                        <th name="Items" order-by="items.length"></th>
+                        <th name="Status" order-by="status"></th>
+                        <th name="Total" order-by="total"></th>
+                        <th name="Details"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="order in vm.salesData.orders | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
+                        <td>{{::order.date | amDateFormat:'MMMM Do YYYY, h:mm:ss a'}}</td>
+                        <td>{{::order.buyer}}</td>
+                        <td>{{::order.items.length}}</td>
+                        <td>
+                                <span class="status" ng-class="'status-' + order.status">
+                                    {{::order.status}}
+                                </span>
+                        </td>
+                        <td>{{::order.total | currency}}</td>
+                        <td>
+                            <md-button ng-click="vm.openOrder(order, $event)" class="md-icon-button" aria-label="Open Order">
+                                <md-icon md-font-icon="zmdi zmdi-search"></md-icon>
+                            </md-button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-data-table-container>
+            <md-data-table-pagination md-limit="vm.query.limit" md-page="vm.query.page" md-total="{{vm.salesData.orders.length}}"></md-data-table-pagination>
+        </tri-widget>
+    </div>
+
+    <!--
+    <div layout="row" layout-sm="column" layout-margin>
+        <tri-widget flex flex-sm="100" title="DASHBOARDS.SALES.ORDER-STATUS" content-padding>
+            <canvas class="chart-doughnut" chart-data="vm.chartPieData.data" chart-legend="true" chart-labels="vm.chartPieData.labels"></canvas>
+        </tri-widget>
+        <tri-widget flex flex-sm="100" title="DASHBOARDS.SALES.TOP-PRODUCT-CATEGORIES" content-padding>
+            <canvas class="chart-bar" chart-data="vm.chartBarData.data" chart-labels="vm.chartBarData.labels" chart-legend="true" chart-options="vm.chartBarData.options" chart-colours="vm.chartBarData.colours" chart-series="vm.chartBarData.series"></canvas>
+        </tri-widget>
+    </div>
+    -->
+
+
+</div>

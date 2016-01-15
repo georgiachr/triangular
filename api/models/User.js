@@ -6,24 +6,20 @@
  */
 
 
-// We don't want to store password without encryption
-//var bcrypt = require('bcrypt');
-
-
 module.exports = {
-  // Define a custom table name
-  tableName: 'user',
 
-  // Set schema true/false for adapters that support schemaless
-  schema: true,
+    // Define a custom table name
+    tableName: 'user',
 
-  // Define an adapter to use
-  //adapter: 'postgresql',
+    // Set schema true/false for adapters that support schemaless
+    schema: true,
+
+    connection: 'myMongoLab',
 
   /* A T T R I B U T E S */
   attributes: {
 
-    // The user's fullname
+    // The user's name
     name: {
       type: 'string',
       required: true
@@ -36,22 +32,41 @@ module.exports = {
     },
 
     // The user's email address
-    // e.g. nikola@tesla.com
     email: {
       type: 'email',
       required: true,
       unique: true
     },
 
-    // The user's title at their job (or something)
-    // e.g. Nurse, Admin, Doctor
-    title: {
+    /**
+    * user role options:
+    * 1. Administrator : system administrator
+    * 2. Coordinator : Nurse with more privileges
+    * 3. Nurse :
+    * 4. login-user
+    */
+    role: {
+      type: 'string',
+      defaultsTo: 'Administrator',
+      required: true
+    },
+
+    // The encrypted password for the user after MD5
+    // e.g. asdgh8a249321e9dhgaslcbqn2913051#T(@GHASDGA
+    encryptedPassword: {
       type: 'string'
     },
 
-    // The encrypted password for the user MD5
-    // e.g. asdgh8a249321e9dhgaslcbqn2913051#T(@GHASDGA
-    encryptedPassword: {
+    // The token
+      //TODO: 1-N association - A user may have many tokens
+    token: {
+      type: 'string'
+        //collection: 'token'
+        //via: ''
+    },
+
+    // The salt used for user's password
+    passwordSalt: {
       type: 'string'
     },
 
@@ -69,67 +84,91 @@ module.exports = {
       defaultsTo: new Date(0)
     },
 
-    // Whether or not the user has administrator privileges
+
+    //unused attributes for this model
     admin: {
       type: 'boolean',
       defaultsTo: false
     },
-
-    /**
-     * user role options:
-     * 1. Admin : system administrator
-     * 2. Coordinator : Nurse with more privileges
-     * 3. Nurse :
-     * 4. login-user
-     */
-    role: {
-      type: 'string',
-      defaultsTo: 'login-user'
-
+    title: {
+      type: 'string'
     },
-
-    // url for gravatar
     gravatarUrl: {
       type: 'string'
-      //defaultsTo: '/images/user-avatar.jpg'
     },
+    avatar:{
+      model: 'filemodel'
+      //TODO: defaultsTo:
+    }
 
-    // token
-    token: {
-      type: 'string'
-    },
-
-//    cars:{
+      //    cars:{
 //      collection: 'car',
 //      via: 'owner'
 //    },
 
-    avatar:{
-      model: 'file'
-      //TODO: defaultsTo:
-    }
-
   },
 
-  /* M E T H O D S */
+    /* M E T H O D S */
 
-  // We don't want to send back encrypted password either
-  toJSON: function () {
-    var obj = this.toObject();
-    delete obj.encryptedPassword;
-    return obj;
-  }
+    // We don't want to send back encrypted password either
+    toJSON: function () {
+        var obj = this.toObject();
+        delete obj.encryptedPassword;
+        return obj;
+    },
 
-  /*comparePassword: function (password, user, cb) {
-   bcrypt.compare(password, user.encryptedPassword, function (err, match) {
+    findUserByAttribute: function (attr){
 
-   if (err) cb(err);
-   if (match) {
-   cb(null, true);
-   } else {
-   cb(err);
-   }
-   })
-   }*/
+        return User.findOne(attr);
+
+    },
+
+    updateUserToken: function (token){
+
+    },
+
+    updateUserByAttr: function (userid, attr){
+
+        return User.update(userid, attr);
+
+    },
+
+    checkPassword: function (useridCredentials, passwordToCheck) {
+        return true;
+    },
+
+    deleteUserById: function (userid) {
+
+        return User.destroy(
+            {id: userid}
+        );
+
+    },
+
+    createNewUser: function (options) {
+
+        return User.create(options);
+
+        //User.create(userdetails, function userCreated(err, newUser)
+
+    },
+
+    getUserListByPage: function (req) {
+
+        var limit = req.param("limit");
+        var skip = req.param("skip") - 1;
+
+        return User.find()
+            .paginate({
+                page: skip,
+                limit: limit
+            });
+
+    },
+
+    getUserCount: function () {
+        return User.count();
+    }
+
 
 };

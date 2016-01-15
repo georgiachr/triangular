@@ -1,0 +1,97 @@
+<!-- there is top,bottom,right,left padding
+<div class="padded-content-page">
+-->
+<div layout="column" layout-align="center center" class="full-image-background mb-bg-fb-07 overlay-40">
+
+    <!-- small div area before md-card or any other content starts -->
+    <div layout="row" layout-align="center center">
+
+        <p flex="70"  flex-sm="90" class="md-headline font-weight-300 text-center text-light" ></p>
+
+    </div>
+
+    <div flex layout="row" layout-align="center center" layout-fill>
+
+        <div flex="80" class="md-whiteframe-z1 margin-bottom-100" layout="column" style="background-color: white">
+
+
+            <md-toolbar class="md-primary">
+
+                <div flex class="md-toolbar-tools" layout="row" layout-align="space-between center">
+                    <h2>List of videos!</h2>
+                </div>
+
+                <md-progress-linear class="md-accent padding-bottom-10"
+                                    md-mode="determinate" >
+                </md-progress-linear>
+
+            </md-toolbar>
+
+
+            <!--
+            <md-button class="md-secondary" ng-click="doSecondaryAction($event)">More Info</md-button>
+            -->
+            <!--
+            <tri-table style="background-color: white;"
+                       class="elements-image-table-example"
+                       columns="::vm.columns"
+                       contents="::vm.contents"
+                       page-size="5">
+
+            </tri-table>
+            -->
+
+            <md-data-table-container>
+                <table md-data-table
+                       class="md-primary md-data-table"
+                       md-row-select="vm.selected"
+                       md-progress="vm.deferred">
+
+                    <thead  md-trigger="vm.getVideoList">
+
+                            <tr>
+                                <!--
+                                <th name="avatar"></th> -->
+                                <th name="id"></th>
+                                <th order-by="title" name="title"></th>
+                                <th name="extension"></th>
+                                <th name="date"></th>
+                                <th></th>
+                            </tr>
+
+                    </thead>
+
+                    <tbody>
+                        <tr md-auto-select ng-repeat="video in vm.videoList">
+
+                            <td>{{::video.id}}</td>
+                            <td>{{::video.name}}</td>
+                            <td>{{::video.extension}}</td>
+                            <td>{{::video.eventdate}}</td>
+
+                        </tr>
+                    </tbody>
+
+                </table>
+            </md-data-table-container>
+
+            <!-- PAGINATION
+            md-label: Change the pagination label. The default is 'Rows per page:'.
+            md-limit: A row limit.
+            md-page: Page number.
+            md-total: Total number of items.
+            md-row-select	Array	Row limit options. The default is [5, 10, 15]
+            md-trigger: Will execute when the page or limit is changed, passing the page and limit as parameters
+            -->
+            <md-data-table-pagination md-limit="vm.pagination.numberOfItemsByPage"
+                                      md-page="vm.pagination.currentPage"
+                                      md-total="{{vm.pagination.totalItems}}"
+                                      md-trigger="vm.pageRequested">
+            </md-data-table-pagination>
+
+
+        </div>
+
+        </div>
+    </div>
+</div>

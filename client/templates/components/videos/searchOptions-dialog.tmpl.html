@@ -1,0 +1,55 @@
+<md-dialog flex="60" flex-sm="100">
+
+    <md-toolbar class="toolbar-default">
+        <div class="md-toolbar-tools">
+            <!--
+            <h2 flex translate>DASHBOARDS.SALES.DATE-CHANGE.TITLE</h2>
+            -->
+            <h2 flex >Select Options</h2>
+            <md-button class="md-icon-button" ng-click="vm.cancelClick()" aria-label="cancel">
+                <md-icon md-font-icon="zmdi zmdi-close"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+
+    <md-dialog-content class="sticky-container">
+        <div layout="row" layout-padding>
+            <div flex layout="column" layout-align="center center">
+
+                <h2 translate>VIDEOS.STATISTICS.DIALOG.START-DATE</h2>
+                <md-datepicker ng-model="vm.startDate"
+                               md-placeholder="Enter start date">
+                    <!--
+                               md-min-date="vm.options.minStartDate"
+                               md-max-date="vm.options.maxStartDate"
+                               -->
+
+                </md-datepicker>
+            </div>
+            <div layout="column" layout-align="center center">
+                <md-icon style="font-size:2.4em" md-font-icon="zmdi zmdi-long-arrow-right"></md-icon>
+            </div>
+            <div flex layout="column" layout-align="center center">
+                <h2 translate>VIDEOS.STATISTICS.DIALOG.END-DATE</h2>
+                <md-datepicker ng-model="vm.endDate"
+                               md-placeholder="Enter end date">
+                               <!--
+                               md-min-date="vm.options.minEndDate"
+                               md-max-date="vm.options.maxEndDate"-->
+
+                               <!--
+                               md-placeholder="'VIDEOS.STATISTICS.DIALOG.END-DATE' | translate">
+                               -->
+
+                </md-datepicker>
+            </div>
+        </div>
+    </md-dialog-content>
+
+    <div class="md-actions" layout="row">
+        <span flex></span>
+        <md-button ng-click="vm.cancelClick()" aria-label="{{'VIDEOS.STATISTICS.DIALOG.CANCEL-BUTTON' | translate}}" translate="VIDEOS.STATISTICS.DIALOG.CANCEL-BUTTON"></md-button>
+        <md-button ng-click="vm.okClick()" class="md-primary" aria-label="{{'VIDEOS.STATISTICS.DIALOG.OK-BUTTON' | translate}}" translate="VIDEOS.STATISTICS.DIALOG.OK-BUTTON"></md-button>
+    </div>
+
+</md-dialog>

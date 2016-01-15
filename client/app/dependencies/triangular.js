@@ -821,12 +821,12 @@ $templateCache.put("app/triangular/layouts/default.tmpl.html","<div layout=\"row
         });
 
         // fetch some dummy emails from the API
-        $http({
+        /*$http({
             method: 'GET',
             url: API_CONFIG.url + 'email/inbox'
         }).success(function(data) {
             vm.emails = data.slice(1,20);
-        });
+        });*/
 
         function openMail() {
             $state.go('private.admin.toolbar.inbox');

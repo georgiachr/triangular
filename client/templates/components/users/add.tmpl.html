@@ -13,6 +13,7 @@
             <div flex class="md-toolbar-tools" layout="row" layout-align="space-between center">
                 <h2>Add a new user!</h2>
                 <h2> {{triWizard.progress}}% <span translate>USERS.ADD.COMPLETE</span></h2>
+
             </div>
 
             <md-progress-linear class="md-accent padding-bottom-10"
@@ -26,6 +27,7 @@
                  layout-fill md-selected="triWizard.currentStep"
                  md-dynamic-height md-stretch-tabs="always">
 
+        <!-- Account Tab-->
             <md-tab id="account">
 
                 <md-tab-label>
@@ -37,246 +39,240 @@
                     <md-content class="md-padding">
                         <form name="accountForm" tri-wizard-form novalidate>
 
-                    <div layout="column" flex>
-                        <md-input-container>
-                            <label translate>USERS.ADD.USERNAME</label>
-                            <input name="username" ng-model="wizardController.data.account.username" required>
-                            <div ng-messages="accountForm.username.$error">
-                                <div ng-message when="required">
-                                    <span translate>USERS.ADD.PLEASE-ENTER</span>
+                            <div layout="column" flex>
+
+                                <div layout layout-sm="column" flex>
+                                    <md-input-container flex >
+                                        <label translate>USERS.ADD.USERNAME</label>
+                                        <input name="username" ng-model="vm.data.account.username" required>
+                                        <div ng-messages="accountForm.username.$error">
+                                            <div ng-message when="required">
+                                                <span translate>USERS.ADD.PLEASE-ENTER</span>
+                                            </div>
+                                        </div>
+                                    </md-input-container>
+
+                                    <md-input-container flex >
+                                        <!--<label>User Role</label>-->
+                                        <md-select ng-change="triWizard.updateProgress()"
+                                                   name="role"
+                                                   ng-model="vm.data.account.role"
+                                                   aria-label="Role Dropdown Select"
+                                                   required>
+                                            <md-option value="administrator" >Administrator</md-option>
+                                            <md-option value="guest" >Guest</md-option>
+
+                                        </md-select>
+                                        <div ng-messages="accountForm.role.$error">
+                                            <div ng-message when="required">
+                                                <span translate>USERS.ADD.PLEASE-ENTER</span>
+                                            </div>
+                                            <div ng-message when="role">
+                                                <span translate>USERS.ADD.PLEASE-VALID</span>
+                                            </div>
+                                        </div>
+                                    </md-input-container>
                                 </div>
-                            </div>
-                        </md-input-container>
-                        <md-input-container>
-                            <label>Email</label>
-                            <input type="email" name="email" ng-model="wizardController.data.account.email" required>
-                            <div ng-messages="accountForm.email.$error">
-                                <div ng-message when="required">
-                                    <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                </div>
-                                <div ng-message when="email">
-                                    <span translate>USERS.ADD.PLEASE-VALID</span>
-                                </div>
-                            </div>
-                        </md-input-container>
-                        <div layout layout-sm="column" flex>
-                            <md-input-container flex>
-                                <label translate>USERS.ADD.PASSWORD</label>
-                                <input type="password" name="password" ng-model="wizardController.data.account.password" required>
-                                <div ng-messages="accountForm.password.$error">
-                                    <div ng-message when="required">
-                                        <span translate>USERS.ADD.PLEASE-ENTER</span>
+
+                                <md-input-container >
+                                    <label>Email</label>
+                                    <input type="email" name="email" ng-model="vm.data.account.email" required>
+                                    <div ng-messages="accountForm.email.$error">
+                                        <div ng-message when="required">
+                                            <span translate>USERS.ADD.PLEASE-ENTER</span>
+                                        </div>
+                                        <div ng-message when="email">
+                                            <span translate>USERS.ADD.PLEASE-VALID</span>
+                                        </div>
                                     </div>
+                                </md-input-container>
+
+                                <div layout layout-sm="column" flex>
+                                    <md-input-container flex >
+                                        <label translate>USERS.ADD.PASSWORD</label>
+                                        <input type="password"
+                                               name="password"
+                                               ng-model="vm.data.account.password"
+                                               required ng-minlength="6" compare-to="accountForm.confirmPassword">
+                                        <div ng-messages="accountForm.password.$error">
+                                            <div ng-message when="required"><span translate>USERS.ADD.PLEASE-ENTER</span></div>
+                                            <div ng-message when="minlength"><span translate>Password must be at least 6 characters.</span></div>
+                                        </div>
+                                    </md-input-container>
+                                    <md-input-container flex >
+                                        <label translate>USERS.ADD.PASSWORD-CONFIRM</label>
+                                        <input type="password"
+                                               name="confirmPassword"
+                                               ng-model="vm.data.account.confirmPassword"
+                                               required>
+                                        <div ng-messages="accountForm.confirmPassword.$error">
+                                            <div ng-message when="required"><span translate>USERS.ADD.PLEASE-ENTER</span></div>
+                                            <div ng-message when="compareTo"><span>Password must match</span></div>
+                                        </div>
+                                    </md-input-container>
                                 </div>
-                            </md-input-container>
-                            <md-input-container flex>
-                                <label translate>USERS.ADD.PASSWORD-CONFIRM</label>
-                                <input type="password" name="passwordConfirm" ng-model="wizardController.data.account.passwordConfirm" required>
-                                <div ng-messages="accountForm.passwordConfirm.$error">
-                                    <div ng-message when="required">
-                                        <span translate>USERS.ADD.PLEASE-ENTER</span>
+
+                             </div>
+                        </form>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
+
+            <!-- Personal Tab -->
+            <md-tab id="personal" ng-disabled="accountForm.$invalid">
+
+                <md-tab-label>
+                    <span class="oxy-step-label">2</span>
+                    <span translate>USERS.ADD.PERSONAL-DETAILS</span>
+                </md-tab-label>
+
+                <md-tab-body>
+                    <md-content class="md-padding">
+                        <form name="personalForm" tri-wizard-form>
+                            <div layout="column" flex>
+                                <div layout layout-sm="column" flex>
+
+                                    <md-input-container flex>
+                                        <label translate>USERS.ADD.FIRST-NAME</label>
+                                        <input name="firstName" ng-model="vm.data.personal.firstName" required>
+                                        <div ng-messages="personalForm.firstName.$error">
+                                            <div ng-message when="required">
+                                                <span translate>USERS.ADD.PLEASE-ENTER</span>
+                                            </div>
+                                        </div>
+                                    </md-input-container>
+
+                                    <md-input-container flex>
+                                        <label translate>USERS.ADD.LAST-NAME</label>
+                                        <input name="lastName" ng-model="vm.data.personal.lastName" required>
+                                        <div ng-messages="personalForm.lastName.$error">
+                                            <div ng-message when="required">
+                                                <span translate>USERS.ADD.PLEASE-ENTER</span>
+                                            </div>
+                                        </div>
+                                    </md-input-container>
+                                </div>
+
+                                <md-input-container>
+                                    <label translate>USERS.ADD.ADDRESS</label>
+                                    <input name="address" ng-model="vm.data.personal.address" required>
+                                    <div ng-messages="personalForm.address.$error">
+                                        <div ng-message when="required">
+                                            <span translate>USERS.ADD.PLEASE-ENTER</span>
+                                        </div>
                                     </div>
+                                </md-input-container>
+
+                                <div layout layout-sm="column" flex>
+                                    <md-input-container flex>
+                                        <label translate>USERS.ADD.TOWN</label>
+                                        <input ng-model="vm.data.personal.town">
+                                    </md-input-container>
+                                    <md-input-container flex>
+                                        <label translate>USERS.ADD.COUNTRY</label>
+                                        <md-select ng-change="triWizard.updateProgress()"
+                                                   name="country"
+                                                   aria-label="Country Dropdown Select"
+                                                   ng-model="vm.data.personal.country"
+                                                   required>
+                                            <md-option value="US" translate>USERS.ADD.US</md-option>
+                                        </md-select>
+                                        <div ng-messages="personalForm.country.$error">
+                                            <div ng-message when="required">
+                                                <span translate>USERS.ADD.PLEASE-ENTER</span>
+                                            </div>
+                                        </div>
+                                    </md-input-container>
                                 </div>
-                            </md-input-container>
+
+                            </div>
+                        </form>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
+
+            <!-- Job details Tab -->
+            <md-tab id="job" ng-disabled="personalForm.$invalid">
+                <md-tab-label>
+                    <span class="oxy-step-label">3</span>
+                    <span translate>USERS.ADD.JOB-PROFILE</span>
+                </md-tab-label>
+                <md-tab-body>
+                    <md-content class="md-padding">
+                        <form name="jobForm" tri-wizard-form>
+                            <div layout="column" flex>
+                                <md-input-container>
+                                    <label translate>USERS.ADD.DEPARTMENT</label>
+                                    <input name="department" ng-model="vm.data.job.department" required>
+                                    <div ng-messages="jobForm.department.$error">
+                                        <div ng-message when="required">
+                                            <span translate>USERS.ADD.PLEASE-ENTER</span>
+                                        </div>
+                                    </div>
+                                </md-input-container>
+                                <md-input-container>
+                                    <label translate>USERS.ADD.POSITION</label>
+                                    <input name="position" ng-model="vm.data.job.position" required>
+                                    <div ng-messages="jobForm.position.$error">
+                                        <div ng-message when="required">
+                                            <span translate>USERS.ADD.PLEASE-ENTER</span>
+                                        </div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+                        </form>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
+
+        <!-- Confirm Tab-->
+            <md-tab id="confirm" ng-disabled="jobForm.$invalid">
+                <md-tab-label>
+                    <span class="oxy-step-label">4</span>
+                    <span translate>USERS.ADD.CONFIRM</span>
+                </md-tab-label>
+                <md-tab-body>
+                    <md-content class="md-padding">
+                        <div class="padding-40" flex layout="column" layout-align="center center">
+                            <md-icon class="big-icon" md-font-icon="zmdi zmdi-cake"></md-icon>
+                            <h2 class="md-display-2" translate>USERS.ADD.CONGRATS</h2>
                         </div>
-                        <md-input-container>
-                            <label>User Role</label>
-                            <input type="email" name="email" ng-model="wizardController.data.account.role" required>
-                            <div ng-messages="accountForm.role.$error">
-                                <div ng-message when="required">
-                                    <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                </div>
-                                <div ng-message when="role">
-                                    <span translate>USERS.ADD.PLEASE-VALID</span>
-                                </div>
-                            </div>
-                        </md-input-container>
-                        <md-input-container>
-                            <label>Avatar</label>
-                            <input type="email" name="email" ng-model="wizardController.data.account.avatar" required>
-                            <div ng-messages="accountForm.avatar.$error">
-                                <div ng-message when="required">
-                                    <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                </div>
-                                <div ng-message when="avatar">
-                                    <span translate>USERS.ADD.PLEASE-VALID</span>
-                                </div>
-                            </div>
-                        </md-input-container>
-                    </div>
-                </form>
-            </md-content>
-        </md-tab-body>
-    </md-tab>
-    <md-tab id="address" ng-disabled="accountForm.$invalid">
-        <md-tab-label>
-            <span class="oxy-step-label">2</span>
-            <span translate>USERS.ADD.PERSONAL-DETAILS</span>
-        </md-tab-label>
-        <md-tab-body>
-            <md-content class="md-padding">
-                <form name="addressForm" tri-wizard-form>
-                    <div layout="column" flex>
-                        <div layout layout-sm="column" flex>
-                            <md-input-container flex>
-                                <label translate>USERS.ADD.FIRST-NAME</label>
-                                <input name="firstName" ng-model="wizardController.data.address.firstName" required>
-                                <div ng-messages="addressForm.firstName.$error">
-                                    <div ng-message when="required">
-                                        <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                    </div>
-                                </div>
-                            </md-input-container>
-                            <md-input-container flex>
-                                <label translate>USERS.ADD.LAST-NAME</label>
-                                <input name="lastName" ng-model="wizardController.data.address.lastName" required>
-                                <div ng-messages="addressForm.lastName.$error">
-                                    <div ng-message when="required">
-                                        <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                    </div>
-                                </div>
-                            </md-input-container>
-                        </div>
-                        <md-input-container>
-                            <label translate>USERS.ADD.ADDRESS</label>
-                            <input name="address1" ng-model="wizardController.data.address.line1" required>
-                            <div ng-messages="addressForm.address1.$error">
-                                <div ng-message when="required">
-                                    <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                </div>
-                            </div>
-                        </md-input-container>
-                        <md-input-container>
-                            <label translate>USERS.ADD.ADDRESS-2</label>
-                            <input ng-model="wizardController.data.address.line2">
-                        </md-input-container>
-                        <div layout layout-sm="column" flex>
-                            <md-input-container flex>
-                                <label translate>USERS.ADD.TOWN</label>
-                                <input ng-model="wizardController.data.address.town">
-                            </md-input-container>
-                            <md-input-container flex>
-                                <label translate>USERS.ADD.STATE</label>
-                                <input ng-model="wizardController.data.address.state">
-                            </md-input-container>
-                        </div>
-                        <div layout layout-sm="column" flex>
-                            <md-input-container flex>
-                                <label translate>USERS.ADD.ZIP</label>
-                                <input name="zip" ng-model="wizardController.data.address.zip" required>
-                                <div ng-messages="addressForm.zip.$error">
-                                    <div ng-message when="required">
-                                        <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                    </div>
-                                </div>
-                            </md-input-container>
-                            <md-input-container flex>
-                                <label translate>USERS.ADD.COUNTRY</label>
-                                <md-select ng-change="triWizard.updateProgress()" name="country" ng-model="wizardController.data.address.country" required>
-                                    <md-option value="US" translate>USERS.ADD.US</md-option>
-                                </md-select>
-                                <div ng-messages="addressForm.country.$error">
-                                    <div ng-message when="required">
-                                        <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                    </div>
-                                </div>
-                            </md-input-container>
-                        </div>
-                    </div>
-                </form>
-            </md-content>
-        </md-tab-body>
-    </md-tab>
-    <md-tab id="billing" ng-disabled="addressForm.$invalid">
-        <md-tab-label>
-            <span class="oxy-step-label">3</span>
-            <span translate>USERS.ADD.JOB-PROFILE</span>
-        </md-tab-label>
-        <md-tab-body>
-            <md-content class="md-padding">
-                <form name="billingForm" tri-wizard-form>
-                    <div layout="column" flex>
-                        <md-input-container>
-                            <label translate>USERS.ADD.CARD-NUMBER</label>
-                            <input name="cardNumber" ng-model="wizardController.data.billing.number" required>
-                            <div ng-messages="billingForm.cardNumber.$error">
-                                <div ng-message when="required">
-                                    <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                </div>
-                            </div>
-                        </md-input-container>
-                        <md-input-container>
-                            <label translate>USERS.ADD.CARD-NAME</label>
-                            <input name="cardName" ng-model="wizardController.data.billing.name" required>
-                            <div ng-messages="billingForm.cardName.$error">
-                                <div ng-message when="required">
-                                    <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                </div>
-                            </div>
-                        </md-input-container>
-                    </div>
-                    <div layout layout-sm="column" flex>
-                        <md-input-container flex>
-                            <label translate>USERS.ADD.CARD-EX-MONTH</label>
-                            <input name="cardMonth" ng-model="wizardController.data.billing.cardMonth" ng-minlength="2" ng-maxlength="2" ng-pattern="/^(0?[1-9]|1[012])$/" required>
-                            <div ng-messages="billingForm.cardMonth.$error">
-                                <div ng-message when="required">
-                                    <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                </div>
-                                <div ng-message when="maxlength">
-                                    <span translate>USERS.ADD.CARD-MONTH-ERROR</span>
-                                </div>
-                                <div ng-message when="minlength">
-                                    <span translate>USERS.ADD.CARD-MONTH-ERROR</span>
-                                </div>
-                                <div ng-message when="pattern">
-                                    <span translate>USERS.ADD.CARD-MONTH-ERROR</span>
-                                </div>
-                            </div>
-                        </md-input-container>
-                        <md-input-container flex>
-                            <label translate>USERS.ADD.CARD-EX-YEAR</label>
-                            <input name="cardYear" ng-model="wizardController.data.billing.cardYear" ng-minlength="4" ng-maxlength="4" ng-pattern="/^[0-9]+$/" required>
-                            <div ng-messages="billingForm.cardYear.$error">
-                                <div ng-message when="required">
-                                    <span translate>USERS.ADD.PLEASE-ENTER</span>
-                                </div>
-                                <div ng-message when="maxlength">
-                                    <span translate>USERS.ADD.CARD-YEAR-ERROR</span>
-                                </div>
-                                <div ng-message when="minlength">
-                                    <span translate>USERS.ADD.CARD-YEAR-ERROR</span>
-                                </div>
-                                <div ng-message when="pattern">
-                                    <span translate>USERS.ADD.CARD-YEAR-ERROR</span>
-                                </div>
-                            </div>
-                        </md-input-container>
-                    </div>
-                </form>
-            </md-content>
-        </md-tab-body>
-    </md-tab>
-    <md-tab id="confirm" ng-disabled="billingForm.$invalid">
-        <md-tab-label>
-            <span class="oxy-step-label">4</span>
-            <span translate>USERS.ADD.CONFIRM</span>
-        </md-tab-label>
-        <md-tab-body>
-            <md-content class="md-padding">
-                <div class="padding-40" flex layout="column" layout-align="center center">
-                    <md-icon class="big-icon" md-font-icon="zmdi zmdi-cake"></md-icon>
-                    <h2 class="md-display-2" translate>USERS.ADD.CONGRATS</h2>
-                </div>
-            </md-content>
-        </md-tab-body>
-    </md-tab>
+                    </md-content>
+                </md-tab-body>
+            </md-tab>
+
     </md-tabs>
+
     <div class="wizard-navbar" layout-fill layout-padding layout="row" layout-align="end center">
-        <md-button class="md-primary md-raised" ng-click="triWizard.prevStep()" ng-hide="triWizard.currentStep > 2" ng-disabled="triWizard.prevStepDisabled()" translate="USERS.ADD.PREV"></md-button>
-        <md-button class="md-primary md-raised" ng-click="triWizard.nextStep()" ng-hide="triWizard.progress == 100 && triWizard.currentStep > 1" ng-disabled="triWizard.nextStepDisabled()" translate="USERS.ADD.NEXT"></md-button>
-        <md-button class="md-accent md-raised" ng-click="triWizard.currentStep = 3" ng-show="triWizard.progress == 100 && triWizard.currentStep < 3" translate="USERS.ADD.SEND"></md-button>
+        <md-button class="md-primary md-raised"
+                   ng-click="triWizard.prevStep()"
+                   ng-hide="triWizard.currentStep > 2"
+                   ng-disabled="triWizard.prevStepDisabled()"
+                   aria-label="Previous Button"
+                   translate="USERS.ADD.PREV">
+        </md-button>
+
+        <md-button class="md-primary md-raised"
+                   ng-click="triWizard.nextStep()"
+                   ng-hide="triWizard.progress == 100 && triWizard.currentStep > 1"
+                   ng-disabled="triWizard.nextStepDisabled()"
+                   aria-label="Next Button"
+                   translate="USERS.ADD.NEXT">
+        </md-button>
+
+        <md-button class="md-accent md-raised"
+                   ng-click="triWizard.currentStep = 3;vm.addUser();"
+                   ng-show="triWizard.progress == 100 && triWizard.currentStep < 3"
+                   aria-label="Send Button"
+                   translate="USERS.ADD.SEND">
+        </md-button>
+
+        <md-button class="md-accent md-raised"
+                   ng-click="vm.addUser()"
+                   aria-label="Send Button">TEST SEND
+        </md-button>
     </div>
+
     </div>
     </div>
 </div>

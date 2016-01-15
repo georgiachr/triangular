@@ -1,0 +1,2 @@
+- Merge doTokensMatch policy with isTokenAuthorized policy
+- Add functionality for multiple Tokens per user to support parallel logins from different browsers

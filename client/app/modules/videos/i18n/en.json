@@ -1,0 +1,30 @@
+{
+    "MENU": {
+        "VIDEOS": {
+            "VIDEOS": "Videos",
+            "LIST": "List",
+            "SOCKETS": "Sockets",
+            "STATISTICS": "Statistics"
+        }
+    },
+    "VIDEOS": {
+        "STATISTICS": {
+            "INTRO": "We have combined material tabs and form inputs to create an interactive form wizardController.  We have also added validation messages to all fields and prevented the user from completing a step in the wizard until it is valid.",
+            "COMPLETE": "Complete",
+            "PASSWORD": "Password",
+            "DIALOG": {
+                "START-DATE": "Start Date",
+                "END-DATE": "End Date",
+                "OK-BUTTON": "OK",
+                "CANCEL-BUTTON": "CANCEL"
+            }
+        },
+        "VIDEOS": {
+            "ROLES":{
+                "GUEST": "Guest",
+                "ADMIN": "Administrator"
+            }
+        }
+    }
+}
+

@@ -27,14 +27,14 @@
             setUser: function setUser(data) {
                 this.userName = data.user['name'];
                 this.userToken = data.user['token'];
-                this.userRole = data.user['title'];
+                this.userRole = data.user['role'];
                 this.userID = data.user['id'];
                 this.userEmail = data.user['email'];
             },
             setCookie: function setCookie(data) {
                 if (data != undefined)
                     $cookies.putObject("userToken", {
-                        userrole: data.user['title'],
+                        userrole: data.user['role'],
                         useremail: data.user['email'],
                         token: data.user['token']
                     });
@@ -62,7 +62,8 @@
             loginUser: function loginUser(data) {
                 this.userStatus = true;
                 this.setUser(data);
-                this.setHeader();
+                this.setHttpHeaders();
+                this.setWebSocketHeaders();
                 this.setCookie(data);
             },
 
@@ -89,20 +90,31 @@
             /**
              * et default headers for session's AJAX calls
              */
-            setHeader: function setHeaders() {
+            setHttpHeaders: function setHttpHeaders() {
 
                 //$httpProvider.defaults.headers.common (headers that are common for all requests):
                 //The defaults can also be set at runtime via the $http.defaults object in the same fashion
                 $http.defaults.headers.common['X-Auth-Token'] = this.userToken;
-                console.log('headers default ready!');
+
+
+            },
+            /**
+             * et default headers for session's WebSocket calls
+             */
+            setWebSocketHeaders: function setWebSocketSHeaders() {
+
+                //io.socket.headers.common['X-Auth-Token'] = this.userToken;
                 //set the X-AUTH-TOKEN
 
             },
-            resetHeader: function resetHeaders() {
+            resetHttpHeaders: function resetHttpHeaders() {
                 //console.log('userAuthService - resetHeader');
                 this.userConfigHeaders = config;
                 this.userConfigHeaders.headers.Authorization = '';
                 //set the X-AUTH-TOKEN
+            },
+            resetWebSocketHeaders: function resetWebSocketHeaders() {
+
             },
             getConfig: function getConfig() {
                 return this.userConfigHeaders;

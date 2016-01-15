@@ -9,345 +9,114 @@
 //sleep = require('sleep');
 var PNG = require("pngjs-image");
 var fs = require("fs");
-//var counterUserAvatarsFound = 0;
-var asyncCounter = 0;
-var prunedUsers;
-var avatarFilepath = "upload_data/";
-var myarray = 0;
-
-var userAvatarTimer = 0;
-
-
-
-/**
- * This function FINDS the file based on file id (function parameter) and
- * Reads this file using readFileSync.
- * @param fileid :
- */
-function getAvatarFileAsync (fileid,index,res,usercount){
-
-  //var userAvatar = null;
-  //var userAvatarFile = null;
-  //user.avatar is a JSON object consisting of many file attributes
-  var file;
-  var filepath = avatarFilepath;
-
-    //find the file (avatar) record
-    asyncCounter++;
-
-    File.findOne({id: fileid})
-      .exec({
-
-        //if something happened and the file was not found, then file is null
-        error: function (err) {
-
-          asyncCounter--;
-          console.log("something happened and the file with id= " + fileid + " was not found " + err);
-          prunedUsers[index]['file'] = null;
-
-
-          // if i am the last called then respond to client
-          if (asyncCounter === 0) {
-            res.json(200,
-              {
-                listOfUsers: prunedUsers,
-                totalNumberOfUsers: usercount
-              }
-            );
-          }
-        },
-
-        //file found
-        success: function (foundfile) {
-
-          asyncCounter--;
-          console.log(index);
-          filepath = filepath + foundfile.name;
-
-          //TODO: if file !== null or undefined
-          try {
-            //this is the synchronous function
-            file = fs.readFileSync(filepath);
-            prunedUsers[index]['file'] = file;
-          }catch(ex){
-            console.log("getAvatarFileAsync: Catch an exception during 'readFileSync' : " + ex);
-            prunedUsers[index]['file'] = null;
-          }finally {
-            // if i am the last called then respond to client
-            if (asyncCounter === 0) {
-              res.json(200,
-                {
-                  listOfUsers: prunedUsers,
-                  totalNumberOfUsers: usercount
-                }
-              );
-            }
-
-          }
-
-        } //success: function (foundfile)
-      }); //File.findOne(
-
-};
-
-/* ########################################## A C T I O N S ############################################### */
+var Q = require('q');
 
 module.exports = {
 
-  /**
-   *
-   * @param req
-   * @param res
-   * @returns {*}
-   */
-  removeUser: function (req, res) {
+    /**
+     *
+     * @param req
+     * @param res
+     * @returns {*}
+     */
+    removeUser: function (req, res) {
 
-    if (!req.param('id')){
-      return res.badRequest('id is a required parameter.');
-    }
-
-    User.destroy({
-      id: req.param('id')
-    }).exec(function (err, usersDestroyed){
-      if (err)
-        return res.negotiate(err);
-
-      if (usersDestroyed.length === 0) {
-        return res.notFound();
-      }
-
-      return res.ok();
-    });
-  },
-
-
-  /**
-   * Normally if unspecified, pointing a route at this action will cause Sails
-   * to use its built-in blueprint action.  We're overriding that here to strip some
-   * properties from the user before sending it down in the response.
-   */
-  findOne: function (req, res) {
-
-    if (!req.param('id')){
-      return res.badRequest('id is a required parameter.');
-    }
-
-    User.findOne(req.param('id')).exec(function (err, user) {
-      if (err) return res.negotiate(err);
-      if (!user) return res.notFound();
-
-      // "Subscribe" the socket.io socket (i.e. browser tab)
-      // to each User record to hear about subsequent `publishUpdate`'s
-      // and `publishDestroy`'s.
-      if (req.isSocket) {
-        User.subscribe(req, user.id);
-      }
-
-      // Only send down white-listed attributes
-      // (e.g. strip out encryptedPassword)
-      return res.json({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        title: user.title,
-        admin: user.admin,
-        lastLoggedIn: user.lastLoggedIn
-
-      }); //</res.json>
-
-    }); //</User.findOne()>
-  },
-
-
-  /**
-   * Normally if unspecified, pointing a route at this action will cause Sails
-   * to use its built-in blueprint action.  We're overriding that here to strip some
-   * properties from the objects in the array of users (e.g. the encryptedPassword)
-   */
-  find: function (req, res) {
-
-    // "Watch" the User model to hear about `publishCreate`'s.
-    User.watch(req);
-
-    User.find().exec(function (err, users) {
-      if (err) return res.negotiate(err);
-
-      var prunedUsers = [];
-
-      // Loop through each user...
-      _.each(users, function (user){
-
-        // "Subscribe" the socket.io socket (i.e. browser tab)
-        // to each User record to hear about subsequent `publishUpdate`'s
-        // and `publishDestroy`'s.
-        if (req.isSocket){
-          User.subscribe(req, user.id);
+        //if is not null or undefined
+        if (!req.param('id')){
+            return res.badRequest('id is a required parameter.');
+        }
+        else{
+            var userid = req.param('id');
         }
 
-        // Only send down white-listed attributes
-        // (e.g. strip out encryptedPassword from each user)
-        prunedUsers.push({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          title: user.title,
-          gravatarUrl: user.gravatarUrl,
-          admin: user.admin,
-          lastLoggedIn: user.lastLoggedIn
 
-        });
-      });
+        User.deleteUserById(userid)
+            .then(function (usersDestroyed){
 
-      // Finally, send array of users in the response
-      return res.json(prunedUsers);
-    });
-  },
+                User.publishDestroy(usersDestroyed[0].id);
+                sails.log.info(usersDestroyed[0].id);
 
+                return res.ok();
+            })
+            .catch(function (err) {
+                sails.log.info("UserController - removeUser: Error  : " + err);
 
-  /**
-   * Update any user.
-   */
-  update: function (req, res) {
+                //notify client about the error
+                return res.serverError(err);
+            });
+    },
 
-    if (!req.param('id')) {
-      return res.badRequest('`id` of user to edit is required');
-    }
-
-    (function _prepareAttributeValuesToSet(allParams, cb){
-
-      var setAttrVals = {};
-      if (allParams.name) {
-        setAttrVals.name = allParams.name;
-      }
-      if (allParams.title) {
-        setAttrVals.title = allParams.title;
-      }
-      if (allParams.email) {
-        setAttrVals.email = allParams.email;
-        // If email address changed, also update gravatar url
-        // execSync() is only available for synchronous machines.
-        // It will return the value sent out of the machine's defaultExit and throw otherwise.
-        setAttrVals.gravatarUrl = require('machinepack-gravatar').getImageUrl({
-          emailAddress: allParams.email
-        }).execSync();
-      }
-
-      // In this case, we use _.isUndefined (which is pretty much just `typeof X==='undefined'`)
-      // because the parameter could be sent as `false`, which we **do** care about.
-      if ( !_.isUndefined(allParams.admin) ) {
-        setAttrVals.admin = allParams.admin;
-      }
-
-      // Encrypt password if necessary
-      if (!allParams.password) {
-        return cb(null, setAttrVals);
-      }
-      require('machinepack-passwords').encryptPassword({password: allParams.password}).exec({
-        error: function (err){
-          return cb(err);
-        },
-        success: function (encryptedPassword) {
-          setAttrVals.encryptedPassword = encryptedPassword;
-          return cb(null, setAttrVals);
-        }
-      });
-    })(req.allParams(), function afterwards (err, attributeValsToSet){
-      if (err) return res.negotiate(err);
-
-      User.update(req.param('id'), attributeValsToSet).exec(function (err){
-        if (err) return res.negotiate(err);
-
-        // Let all connected sockets who were allowed to subscribe to this user
-        // record know that there has been a change.
-        User.publishUpdate(req.param('id'), {
-          name: attributeValsToSet.name,
-          email: attributeValsToSet.email,
-          title: attributeValsToSet.title,
-          admin: attributeValsToSet.admin,
-          gravatarUrl: attributeValsToSet.gravatarUrl
-        });
-
-        return res.ok();
-      });
-    });
-
-  },
-
-    /**OK
-     * Validate user using an email
-     * isTokenAuthorized policy called before this action starts.
-     * isUserTokenValid called before this action begins (search for user and compares tokens)
+    /**
+     * Returns a user object to client
+     * isTokenAuthorized policy is mandatory to this action.
      * @param req {String} User email and token
      * @param res
      */
     loginExistedUser: function (req, res) {
 
-        console.log('loginExistedUser API');
+        var currentUser = req.options.policyparams.currentuser || {};
 
-        //Check if req params are correctly defined
-        req.validate({
-          email: 'string',
-          token: 'string'
-        });
+        if(undefined !== currentUser){
 
-        //Look up for the user using the provided email address
-        User.findOne({
-          email: req.param('email')
-        },function foundUser(err, user) {
-
-            if (err) {
-                console.log("loginExistedUser: negotiate error");
-                return res.negotiate(err);
+            /**
+             * if there is a socket
+             * Add user into a room called onlineUsers
+             */
+            if (req.isSocket) {
+                sails.sockets.join(req.socket, 'onlineUsers');
             }
 
-            if (!user){
-                console.log("loginExistedUser: No user found");
-                return res.notFound();
-            }
-            else { //if user exists
-                return res.json(200, {user: user});
-
-            }
-        }); //User.findOne
-
+            return res.json(200, {user: currentUser});
+        }
+        else{
+            sails.log.error(req.target.controller+" "+req.target.action+" Error: There is no user! ");
+            return res.serverError();
+        }
   },
 
-
-    test: function (req, res) {
-
-        if (req.headers) {
-            console.log(req.headers);
-        }
-
-        return res.ok();
-
-    },
-
-
-  /**OK
-   * Check the provided email address and password, and if they
-   * match a real user in the database, sign in to Activity Overlord.
-   */
+    /**
+     * Check
+     * Mandatory Policies:
+     * @param req email password
+     * @param res
+     * @returns {*}
+     */
   login: function (req, res) {
 
-    req.validate({
-      email: 'string',
-      password: 'string'
-    });
+        /**
+         * Validate Request fields.
+         * Necessary fields: email, password
+         */
+        if (!validationsAndInitializationsForUser.validateUserLoginFields(req)) {
+            return res.badRequest();
+        }
+        else {
+            var userPassword = req.param('password');
+            var userEmail = req.param('email');
+        }
 
-    // Try to look up user using the provided email address
+    // Look up for user using the provided email address
     User.findOne({
       email: req.param('email')
     }, function foundUser(err, user) {
-      if (err) {console.log("negotiate error");return res.negotiate(err)};
-      if (!user) {console.log("not user");return res.notFound();}
+
+        if (err) {
+          sails.log.info("negotiate error");
+          return res.serverError(err);
+        };
+
+        if (!user) {
+          sails.log.info("not user");
+          return res.notFound();
+        }
 
 
-      require('machinepack-passwords').checkPassword({passwordAttempt: req.param('password') , encryptedPassword: user.encryptedPassword})
+        // remove users
+        require('machinepack-passwords').checkPassword({passwordAttempt: req.param('password') , encryptedPassword: user.encryptedPassword})
           .exec({
 
             error: function (err){
-              return res.negotiate(err);
+              return res.serverError(err);
             },
 
             /**
@@ -367,7 +136,15 @@ module.exports = {
              */
             success: function (){
               // The user is "logging in" (e.g. establishing a session)
-              //console.log(JSON.stringify(user));
+              //sails.log.info(JSON.stringify(user));
+
+                /**
+                 * if there is a socket
+                 * Add user into a room called onlineUsers
+                 */
+                if (req.isSocket) {
+                    sails.sockets.join(req.socket, 'onlineUsers');
+                }
 
               // 1. so update the `lastLoggedIn` attribute.
               User.update(user.id, {lastLoggedIn: (new Date()).toString()},
@@ -399,7 +176,7 @@ module.exports = {
    */
   logout: function (req, res) {
 
-    console.log("Logout API");
+    sails.log.info("Logout API");
 
     var header_token = null;
 
@@ -415,7 +192,7 @@ module.exports = {
             }, function foundUser(err, user) {
 
               if (err) {
-                console.log("Logout: Error find user!");
+                sails.log.info("Logout: Error find user!");
                 return res.negotiate(err);
               }
 
@@ -431,7 +208,7 @@ module.exports = {
 
               }
               else { //user not found
-                console.log("Logout: User not found!");
+                sails.log.info("Logout: User not found!");
                 return res.notFound();
               }
 
@@ -440,278 +217,77 @@ module.exports = {
       }
   },
 
-  /**
-   * Returns a list of users
-   * @param req
-   * @param res
-   * limit() function in MongoDB is used to specify the maximum number of results to be returned.
-   */
-  userList: function (req, res) {
+    /**
+     *
+     * @param req
+     * @param res
+     */
+    userList: function (req, res) {
 
-    /*
-      if(myarray == 0){
-        myarray++;
-        sleep.sleep(10);
-      }
-      console.log(myarray);
-*/
-
-    /*
-      fs.readFile("", function (err, data) {
-
-        sleep.sleep(10);
-
-        console.log(myarray);
-
-        myarray--;
-
-        console.log(myarray);
-      });*/
-
-    //Example 3: not working
-    /*var  myarray = new Array(10);
-    var count = 0;
-    _.each(myarray, function () {
-      count++;
-      console.log('each = ' + count);
-      (function example3() {
-        fs.readFile("", function (err, data) {
-          console.log('readfile = ' + count);
-          //sleep.sleep(10);
-        })
-      })(count);
-    });*/
-
-    //example 2
-    /*
-    var myarray = new Array(10);
-
-    var num=0;
-    _.forEach(myarray,function(number){
-
-      num++;
-      console.log("foreach: " + num);
-
-
-      fs.readFile("", function (err, data) {
-        if (err) {console.log("readfile: " + num);}
-      });
-
-    });
-    */
-
-
-    //Example 3
-    /*
-    var myarray = new Array(10);
-
-    var num=0;
-    _.forEach(myarray,function(number){
-
-      num++;
-      console.log("foreach: " + num);
-
-      (function ioio (){
-
-        //this.num = num;
-        var numo = num;
-        console.log("ioio: " + num);
-
-        fs.readFile("", function (err, data) {
-          if (err) {
-            console.log("readfile: " + numo);
-          }
-        });
-
-      })(num);
-
-    });
-    */
-
-    //Example 4: sleep
-    /*var myarray = new Array(10);
-
-    var num=0;
-    _.forEach(myarray,function(number){
-
-      num++;
-      console.log("foreach: " + num);
-
-      (function ioio (){
-
-        //this.num = num;
-        var numo = num;
-        console.log("ioio: " + num);
-
-        sleep.sleep(10);
-
-      })(num);
-
-    });*/
-
-
-    //Example 5: increase file size
-    /*
-    var myarray = new Array(1);
-
-    var num=0;
-    _.forEach(myarray,function(number) {
-
-      num++;
-      console.log("foreach: " + num);
-
-      (function ioio() {
-
-        //this.num = num;
-        var numo = num;
-        fs.readFile("./test.pdf", function (err, data) {
-          if (data) {
-            res.json(data);
-            console.log("readfile A: " + numo);
-          }
-          if (err) {
-            res.negotiate(err);
-          }
-        });
-
-      })(num);
-    });
-    */
-    var filename = './test.pdf';
-    var stat = fs.statSync(filename);
-
-    res.writeHead(200, {
-      'Content-Type': 'application/exe',
-      'Content-Length': stat.size
-    });
-
-    require('fs').createReadStream(filename)
-      .on('error', function (err) {
-        return res.serverError(err);
-      })
-      .pipe(res);
-
-    console.log("code completed here ");
-  },
-
-  userListold: function (req, res) {
-
-    var usercount = 0;
-    var textForSearch = req.param('searchText');
-    var pagesize = req.param("pageSize");
-    var skipcount = req.param("paginationGetListStartIndex")-1;
-
-    asyncCounter = 0;
-
-    if(textForSearch === undefined)
-      textForSearch = "";
-
-
-    var likeObj =
-    {
-      name:'%'+textForSearch+'%'
-    };
-
-    var likeObject = {
-      like:{
-        name:'%'+textForSearch+'%'
-      }
-    };
-
-    var likewithpaginationObject = {
-      like:{
-        name:'%'+textForSearch+'%'
-      },
-      skip:skipcount,
-      limit:pagesize
-    };
-
-
-    //Get the total number of User model collection
-    User.count(likeObject).exec({
-      error:function(err){
-        console.log(err);
-        return res.negotiate(err);
-      },
-      success: function (numberofusersfound) {
-
-        if(numberofusersfound == 0){
-
-          // respond back with an empty list
-          return res.json(200,
-            {
-              listOfUsers: [],
-              totalNumberOfUsers: 0
-            });
-
-        }
-        else{
-          usercount = numberofusersfound;
+        if(req.isSocket){}
+        /**
+         *  Validate req parameters for object
+         *  If not valid send bad request to server
+         */
+        if (!UserValidations.userListRequestValidation(req)) {
+            return res.badRequest();
         }
 
-        User.find(likewithpaginationObject).populate('avatar')
-          .exec({
+        /**
+         *  Get Both User Count and Respective Page
+         *  When all done go to done
+         */
+        Q.all([
+            User.getUserListByPage(req),
+            User.getUserCount()
+        ])
+        /**
+         * When ALL promises finish call then with the corresponding values in an array
+         */
+        .then(function(arrayOfValues){
 
-          error: function (err) {
-            console.log("Server error when populate users' avatar images : " + err);
-            return res.negotiate(err);
-          },
+            //subscribe user ids
+            var list = UserDBResultsManagingFunctions.prepareUserList(req,arrayOfValues[0]);
 
-          success: function (users) {
-
-            prunedUsers = []; //global variable
-            var usersWithAvatars = 0;
-
-            // Loop through each user... (0, 1, 2, ... )
-            // Create user list with information
-            _.each(users, function (user,index) {
-                  prunedUsers.push({
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    title: user.title,
-                    file: null, //just for now
-                    lastLoggedIn: user.lastLoggedIn
-                  });
-
-                  if (user.avatar !== undefined){
-                    usersWithAvatars++;
-                  }
-
-              });
-
-            if(usersWithAvatars === 0 ){
-              // respond back with empty list
-              return res.json(200,
+            return res.json(200,
                 {
-                  listOfUsers: prunedUsers,
-                  totalNumberOfUsers: usercount
-                });
-            }
-            else { //if at least a user has an avatar image
+                    userList: list,
+                    totalUsers: arrayOfValues[1]
+                })
 
-              _.each(users, function (user, index) {
-                if (user.avatar !== undefined)
-                  getAvatarFileAsync(user.avatar['id'], index, res, usercount); //find file and increase counter when file retrieved
-              });
+        })
+        /**
+         * If even one returns a rejected promise then catch
+         */
+            /*.catch(function (rejected) {
+             sails.log.error("UserController - userList: Promise rejected  : " + rejected);
 
-            }
+             //notify client about the error
+             return res.serverError(rejected);
+             })*/
+        /**
+         * If even one returns a rejected promise then .fail
+         */
+        .fail(function (err) {
 
-          } //in success
+            sails.log.error("UserController - userList: Error  : " + err);
 
+            //notify client about the error
+            return res.serverError(err);
+        })
+        /**
+         * Call done no matter what
+         */
+        .done(function(){
+            //sails.log.info('Done from UserController paginating user list');
         });
-
-      }
-
-
-    });
-  },
+    },
 
 
-  /**
+  /** OK
    * Update a user account.
    * Update only user's name and user's email
-   * updateuser action's policies: isTokenAuthorized, isAdmin
+   * updateuser action's policies: isTokenAuthorized, isUserTokenValid, isAdmin
    *
    */
   updateUser: function(req, res) {
@@ -770,84 +346,172 @@ module.exports = {
 
   },
 
+    /**
+     *
+     * Create a new user and add user in the database.
+     * This function is developed using Q promises. First it requests an encrypted password for user's password.
+     * If the promise is fulfilled then call the User.create promise to create the user.
+     * Mandatory Policies: isTokenAuthorized, isUserAdmin
+     * @param req new user's email and password
+     * @param res
+     */
+    addUser: function(req, res) {
 
-  /**
-   * Create a new user account.
-   * adduser action's policies: isTokenAuthorized, isAdmin
-   *
-   */
-  adduser: function(req, res) {
+        /**
+         * Validate Request fields.
+         * Necessary fields: email, password
+         */
+        if (!validationsAndInitializationsForUser.validateNewUserFields(req)) {
+            return res.badRequest();
+        }
+        else {
+            var userPassword = req.param('password');
+        }
 
+        bcryptPassword.encryptPassword(userPassword)
+            .then(function(encryptedPassword){
+                //return bcryptPassword.comparePasswords(userPassword,hashed);
 
-    //1. can user do this action? - isUserAuthorized
-    //2. is user logged in - isTokenAuthorized
-    //isAdmin.verifyToken(header_token,function(err, token) {}
+                var userDetails = UserDBResultsManagingFunctions.prepareNewUserDetails(req, encryptedPassword);
 
-    /* User requested the creation of a new user has an ADMIN role? */
-    //isAdmin
+                return User.create(userDetails);
+            })
+            .then(function(user){
 
+                return res.json(200,
+                    {
+                        id: user.id
+                    })
 
-    /* Create the user */
-    req.validate({
-      email: 'string',
-      password: 'string'
-    });
+            })
+            .catch(function(err){
 
-    // Encrypt user's new password
-    require('machinepack-passwords').encryptPassword({password: req.param('password')})
-      .exec({
+                sails.log.error("UserController - AddUser -- Promise failed!");
 
-        error: function(err) {
-          return res.negotiate(err);
-        },
-
-        success: function(encryptedPassword) {
-
-          require('machinepack-gravatar').getImageUrl({emailAddress: req.param('email')})
-            .exec({
-
-              error: function(err) {
-                return res.negotiate(err);
-              },
-
-              success: function(gravatarUrl) {
-
-                // Create a User with the params sent from
-                // the addUserForm
-                User.create({
-                  name: req.param('name'),
-                  surname: req.param('surname'),
-                  title: req.param('title'),
-                  email: req.param('email'),
-                  encryptedPassword: encryptedPassword,
-                  lastLoggedIn: new Date(),
-                  gravatarUrl: gravatarUrl
-                }, function userCreated(err, newUser){
-
-                  if (err) {
-                    // If this is a uniqueness error about the email attribute,
-                    // send back an easily parseable status code.
-                    if (err.invalidAttributes && err.invalidAttributes.email && err.invalidAttributes.email[0] && err.invalidAttributes.email[0].rule === 'unique') {
-                      //TODO: use res.emailAddressInUse()
-                      return res.emailAddressInUse();
-                    }
-
-                    // Otherwise, send back something reasonable as our error response.
-                    return res.negotiate(err);
-                  }
-
-                  // Send back the id of the new user
-                  return res.json(200,{
-                    id: newUser.id
-                  });
-                });
-              }
+                return res.serverError(err);
+            })
+            .done(function(){
 
             });
-        }
-      });
-  }
+    },
 
+    changePassword: function changePassword(req,res) {
+
+        /**
+         * Validate Request fields.
+         * Necessary fields: email
+         */
+        if (!validationsAndInitializationsForUser.validateChangePasswordFields(req)) {
+            return res.badRequest();
+        }
+        else {
+            var userPassword = req.param('password');
+            var userID = req.param('userid');
+            var token = req.param('token');
+        }
+
+        var theEncryptedPassword;
+
+        bcryptPassword.encryptPassword(userPassword)
+            .then(function(encryptedPassword){
+                theEncryptedPassword = encryptedPassword;
+
+                return User.findUserByAttribute({token: token});
+
+            })
+            .then(function(user){
+
+                sails.log.info('user id found based on token  = ' + user.id);
+
+                //issue a new token
+                var newToken = jwtToken.issueToken({userid: user.id});
+
+                //update user
+                return User.updateUserByAttr(user.id, {token: newToken, encryptedPassword: theEncryptedPassword });
+
+            })
+            .then(function(users){
+
+                return res.json(200,
+                    {
+                        user: users[0]
+                    })
+
+            })
+            .catch(function(err){
+
+                sails.log.error("UserController - User -- Promise failed!");
+
+                return res.serverError(err);
+            })
+            .done(function(){
+
+            });
+
+
+    },
+
+    initiateResetPassword: function initiateResetPassword(req,res){
+
+        /**
+         * Validate Request fields.
+         * Necessary fields: email
+         */
+        if (!validationsAndInitializationsForUser.validateResetPasswordWithTokenFields(req)) {
+            return res.badRequest();
+        }
+        else {
+            var userEmail = req.param('email');
+        }
+
+        /**
+         * Find user with the requested email
+         * Email is a unique model attribute
+         */
+        User.findOne({email: userEmail})
+            .then(function(userFound){
+
+                if (!userFound)
+                    sails.log.info("userNotFound = ");
+
+                //1. create a temporary token using a synchronous function
+                //2. set limit time
+                var newToken =  jwtToken.issueToken({userid: userFound.id});
+
+                sails.log.info("newToken = "+newToken);
+
+                return User.updateUserByAttr(userFound.id,{token:newToken});
+            })
+            .then(function(userUpdated){
+
+                sails.log.info("user's id is = "+userUpdated[0].id);
+                sails.log.info("user's updated token is = "+userUpdated[0].token);
+
+                return res.json(200,
+                       {
+                           token: userUpdated[0].token,
+                           userid: userUpdated[0].id
+                       }
+                );
+
+            })
+            .catch(function(err){
+
+                sails.log.error("UserController - initiateResetPassword -- Promise failed!");
+
+                return res.serverError(err);
+            })
+            .done(function(){
+                sails.log.info('done from initiateResetPassword');
+            });
+    }
+
+
+    /*resetpasswordwithtoken: function resetpasswordwithtoken(req,res){
+        //check token
+        // redirect to reset password page
+
+        res.redirect('http://localhost:1337/changepassword');
+    }*/
 
 };
-

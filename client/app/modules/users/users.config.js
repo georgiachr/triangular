@@ -12,7 +12,7 @@
 
     /* @ngInject */
     function moduleConfig($translatePartialLoaderProvider, $stateProvider, triMenuProvider) {
-        $translatePartialLoaderProvider.addPart('app/il8n/users');
+        $translatePartialLoaderProvider.addPart('app/modules/users');
 
 //        if(useridentity.userRole == "Administrator")
 //        {

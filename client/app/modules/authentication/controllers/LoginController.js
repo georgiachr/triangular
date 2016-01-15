@@ -14,13 +14,14 @@
         .controller('LoginController',LoginController);
 
     /* @ngInject */
-    function LoginController($scope,$state, triSettings, useridentity, $http) {
+    function LoginController($scope,$state, triSettings, useridentity, $http, $mdToast) {
         var vm = this;
 
         console.log('LoginController called!');
 
         //use $scope for services
         $scope.useridentity = useridentity;
+        vm.loginStatus=false;
 
         //functions
         vm.loginClick = loginClick;
@@ -48,36 +49,45 @@
 
 
         /**
-         * Only for users that have not a stored cookie
+         * Only for users that don't have a stored cookie
+         * User's email and password are required fields.
+         *
          */
         function userLoginRequest (){
+
+            vm.loginStatus=false;
 
             $http.put('/login', {
                 email: vm.user.email,
                 password: vm.user.password
             })
-                .then(function onSuccess (responseData) {
+            .then(function onSuccess (responseData) {
 
-                    var data = angular.fromJson(responseData)['data'];
+                var data = angular.fromJson(responseData)['data'];
 
-                    //Store user info into the useridentity service
-                    $scope.useridentity.loginUser(data);
+                //Store user info into the useridentity service
+                $scope.useridentity.loginUser(data);
 
-                    //User is now authenticated!
-                    //Therefore, change state based on user role
-                    //TODO: regular expression to user.HOME
-                    vm.changeStates($scope.useridentity.getUserRole());
+                //User is now authenticated!
+                //Therefore, change state based on user role
+                //TODO: regular expression to user.HOME
+                vm.changeStates($scope.useridentity.getUserRole());
 
-                    //vm.testing();
+            })
+            //catch any error even errors inside then (besides $http errors)
+            .catch(function onError(sailsResponse) {
 
-                })
-                //catch any error even errors inside then (besides $http errors)
-                .catch(function onError(sailsResponse) {
-                    console.log("SIGN-IN onError "+JSON.stringify(sailsResponse));
+                //User email or password incorrect
+                if(sailsResponse.status == 404)
+                {
+                    vm.loginStatus=true;
+                    showToastMessage('Wrong username or password! Try again.' + vm.loginStatus);
+                }
 
-                })
-                .finally(function eitherWay(){
-                });
+            })
+            .finally(function eitherWay(){
+
+            });
         }
 
 
@@ -85,6 +95,16 @@
             if(userRole === "Administrator"){
                 $state.go('dashboard.admin.users-list');
             }
+        }
+
+        function showToastMessage(message){
+            $mdToast.show(
+                $mdToast.simple()
+                    //.content($filter('translate')('MESSAGES.LANGUAGE_CHANGED'))
+                    .content(message)
+                    .position('bottom right')
+                    .hideDelay(500)
+            );
         }
 
         /*$scope.$watch('useridentity.userRole', function(){
@@ -100,5 +120,5 @@
 
     }
 
-    LoginController.$inject = ['$scope','$state','triSettings','useridentity','$http'];
+    LoginController.$inject = ['$scope','$state','triSettings','useridentity','$http','$mdToast'];
 })();

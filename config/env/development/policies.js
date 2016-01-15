@@ -24,19 +24,27 @@ module.exports.policies = {
   //'*': ['isTokenAuthorized'], // Everything resctricted here
   //
   'UserController': {
+      '*': true,
       'login': true, // We do not need authorization here, allowing public access
-      'logout': ['isTokenAuthorized','isUserTokenValid'],
-      'loginExistedUser': ['isTokenAuthorized','isUserTokenValid'],
+      'logout': ['isTokenAuthorized'],
+      'loginExistedUser': 'isTokenAuthorized',
+      'userList': ['isTokenAuthorized','isUserAdmin'],
+      'addUser': ['isTokenAuthorized'],
+      'removeUser': ['isTokenAuthorized','isUserAdmin'],
+      'updateUser': ['isTokenAuthorized','isUserAdmin'],
+      'initiateResetPassword': true,
+      'changePassword': true,
+
       'test': true
       //'validateUser': ['isTokenAuthorized']
       //  'addUser': ['isAdmin'],
       //  'userList': ['isAdmin'],
       //  'updateUser': ['isAdmin'],
       //  'destroy': ['isAdmin']
+  },
+  'VideoController': {
+      '*': true,
+      'videoList': ['isTokenAuthorized','isUserAdmin']
   }
-  //
-  //'FileController': {
-  //  'uploadAvatar': ['isAdmin']
-  //}
 
 };

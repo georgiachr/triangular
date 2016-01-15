@@ -29,8 +29,7 @@
         vm.validateExistedUserToken = validateExistedUserToken;
         vm.printError = printError;
 
-        //calls
-        vm.findClientCookie();
+
 
         //////////////////////////////
 
@@ -38,6 +37,7 @@
         function findClientCookie(){
 
             //TODO check if cookie expired
+            console.log('Looking for a client cookie .. ');
 
             //if a cookie named 'userToken' exists
             if ($scope.useridentity.getCookie())
@@ -47,8 +47,7 @@
                 var email = $scope.useridentity.getCookie().useremail;
                 var role = $scope.useridentity.getCookie().userrole;
 
-                console.log('found cookie');
-                console.log('cookies token = ' + token);
+                console.log('Found cookie for this client.');
                 vm.validateExistedUserToken(token,email,role);
 
             }
@@ -61,8 +60,13 @@
         }
 
         function changeStates(userRole) {
-            if (userRole === "Administrator")
+            console.log('User should automatically login (based on their role) because token is OK');
+
+            if (userRole === "Administrator"){
+                console.log('Change state based on user role Administrator');
                 $state.go('dashboard.admin.users-list');
+            }
+
         }
 
         function validateExistedUserToken (token,email,role)
@@ -81,6 +85,9 @@
 
         function validateUserTokenRequest (token,email,role){
 
+            console.log('Authorize and Validate cookie for this client using an AJAX request to \'loginExistedUser\'.');
+
+
             //create my temporary request body
             var request = {
                 method: 'PUT',
@@ -95,6 +102,7 @@
             //first token authorized, then token validation
             $http(request)
                 .then(function onSuccess (responseData){
+                    console.log('I GOT the authorization and validation request result!');
                     var data = angular.fromJson(responseData)['data'];
 
                     //if user's token is authorized and valid then stored user's data
@@ -143,6 +151,9 @@
                 return;
             }
         }
+
+        //initialization
+        vm.findClientCookie();
 
 
     }

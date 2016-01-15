@@ -30,12 +30,18 @@ module.exports.routes = {
   'PUT /loginExistedUser': 'UserController.loginExistedUser',
   //'PUT /test': 'UserController.test',
   'POST /logout': 'UserController.logout',
-  'POST /adduser': 'UserController.adduser',
+  'POST /adduser': 'UserController.addUser',
   'POST /updateuser': 'UserController.updateuser',
-  'POST /removeuser': 'UserController.removeuser',
+  'DELETE /removeuser': 'UserController.removeUser',
   //'POST /uploadavatar': 'FileController.uploadavatar',
 
-  'GET /userlist': 'UserController.userlist'
+  'GET /userlist': 'UserController.userlist',
+
+  'GET /videolist': 'VideoController.videolist',
+  'GET /sockettest': 'VideoController.testingSockets',
+  'GET /enterroom': 'VideoController.enterRoom',
+  'POST /resetpasswordwithtoken': 'UserController.initiateResetPassword',
+  'POST /changepassword': 'UserController.changePassword'
 
 
 };

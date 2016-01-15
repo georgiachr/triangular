@@ -19,15 +19,13 @@
 
 /**
  * This policy verifies that the token from request header 'X-Auth-Token' is verified as a structure.
- * It does not checks user's stored token with this token.
+ * Also checks user's stored token with this token (tokens match).
  * @param req
  * @param res
  * @param next
  * @returns {*}
  */
 module.exports = function (req, res, next) {
-
-console.log("isTokenAuthorized POLICY!");
 
     var header_token;
     var userid;
@@ -37,12 +35,12 @@ console.log("isTokenAuthorized POLICY!");
 
         // if no token header exists then user is not authorized!
         if (req.headers["x-auth-token"] === undefined) {
-            console.log("isTokenAuthorized: Token undefined");
+            sails.log.info("isTokenAuthorized: Token undefined");
             return res.json(401, {err: 'isTokenAuthorized: No Authorization header was found'});
         }
         else {
             header_token = req.headers["x-auth-token"];
-            console.log('isTokenAuthorized: header_token = ' + header_token);
+            //sails.log.info('isTokenAuthorized: header_token = ' + header_token);
 
             // if token exists - check token is valid
             // jwtToken.verifyToken is an Asynchronous function.
@@ -50,66 +48,79 @@ console.log("isTokenAuthorized POLICY!");
             // it has nothing to do with user's stored token
             jwtToken.verifyToken(header_token, function (err, token) {
 
-                //not a valid token
-                if (err) {
-                    return res.json(401, {err: 'isTokenAuthorized: The token is not valid'});
-                }
-                else { // valid token - get userid from it
-                    console.log('isTokenAuthorized: token was successfully verified! ');
+            //not a valid token
+            if (err) {
+                return res.json(401, {err: 'isTokenAuthorized: The token is not valid'});
+            }
+            else { // valid token - get userid from it
 
-                    decoded = jwtToken.decodeToken(header_token, {complete: true});
+                decoded = jwtToken.decodeToken(header_token, {complete: true});
 
-                    //console.log(JSON.stringify(decoded));
+                //sails.log.info(JSON.stringify(decoded));
 
-                    userid = decoded.payload.userid;
+                userid = decoded.payload.userid;
 
-                    //Find user having userid
-                    User.findOne({
-                        id: userid
-                    }, function foundUser(err, user) {
+                //Find user having userid
+                //Use WATERLINE's predefined query method with PROMISES
+                User.find()
+                    .where({ id: userid })
+                    .then(function(users){
+                        var founduser = users[0];
 
-                        if (err) {
-                            console.log("isTokenAuthorized: Error while searching for a user with the specific token-userid");
-                            return res.negotiate(err)
-                        }
-
-                        if (!user) {
-                            console.log("isTokenAuthorized: User with the specific token-userid not found");
+                        // return error if user not found
+                        if (!founduser) {
+                            console.log("isUserTokenAuthorized POLICY: No user found!");
                             return res.notFound();
                         }
-                        else //if user found then set Response Header with the specific token
-                        {
-                            //check if their token is near expiration
-                            if (jwtToken.tokenExpiresInMinutes(header_token) < sails.config.globals.tokenNearTimeExpirationInMinutes) {
 
-                                console.log('near expiration');
-
-                                var newtoken = jwtToken.issueToken(decoded.payload);
-
-                                //update user's new token in db
-                                User.update(user.id, {token: newtoken},
-                                    function (err, updated) {
-                                        if (err) {
-                                            console.log("isTokenAuthorized: Can't update user with the new token!");
-                                            return res.negotiate(err);
-                                        }
-                                        else {
-                                            // All done- let the client know the new token.
-                                            res.set('X-Auth-Token',newtoken);
-                                            next();
-                                        }
-                                    }); //update
-                            }
-                            else {
-                                res.set('X-Auth-Token',header_token);
-                                next();
-                            }
-
+                        //check if tokens do not match
+                        if (founduser.token != header_token) {
+                            console.log("isUserTokenAuthorized POLICY: Request Token does not Match User.token!");
+                            return res.json(401, {err: 'isUserTokenAuthorized POLICY: Request Token does not Match User.token'});
                         }
-                    }); //findone
 
-                } //else (token is valid)
-            }); //verify token
+                        //tokens match successfully
+                        //check if their token is near expiration
+                        var mins = jwtToken.tokenExpiresInMinutes(header_token);
+
+                        //save user data using request options
+                        req.options.policyparams = req.options.policyparams || {};
+                        req.options.policyparams.currentuser = founduser;
+
+                        //sails.log.info('req.options.policyparams.currentuser = ' + JSON.stringify(req.options.policyparams.currentuser));
+
+                        if ( mins < (sails.config.globals.tokenNearTimeExpirationInMinutes-5)) {
+
+                            sails.log.info('isTokenAuthorized: token is expired! ' + mins);
+                            var newtoken = jwtToken.issueToken(decoded.payload);
+
+                            User.update(founduser.id,{token: newtoken})
+                                .then(function(updated){
+                                    // All done- let the client know the new token.
+                                    res.set('X-Auth-Token',newtoken);
+                                    sails.log.info("isTokenAuthorized POLICY: User's token is authorized!");
+                                    return next();
+                                })
+                                .catch(function(err){
+                                    sails.log.info("isTokenAuthorized: Can't update user with the new token!");
+                                    return res.negotiate(err);
+                                });
+                        }
+                        else {
+                            res.set('X-Auth-Token',header_token);
+                            sails.log.info("isTokenAuthorized POLICY: User's token is authorized!");
+                            return next();
+                        }
+
+                    })
+                    .catch(function(err){
+                        sails.log.info("isTokenAuthorized: Error while searching for a user with the specific token-userid");
+                        return res.negotiate(err)
+                    });
+
+
+            } //else (token is valid)
+        }); //verify token
 
         }
 

@@ -13,10 +13,12 @@
          *  each module will have a il8n folder that will contain its translations
          */
         $translateProvider.useLoader('$translatePartialLoader', {
-            urlTemplate: '{part}/il8n/{lang}.json'
+            urlTemplate: '{part}/i18n/{lang}.json' //configure the default language structure (applies to all modules even app)
+                                                    //lang and part are reserved keywords
         });
 
-        $translatePartialLoaderProvider.addPart('app');
+        $translatePartialLoaderProvider.addPart('app'); //app/il8n/{lang}.json
+                                                        //app/modules/authentication/il8n/{lang}.json should be this
 
         // make sure all values used in translate are sanitized for security
         $translateProvider.useSanitizeValueStrategy('sanitize');
@@ -46,5 +48,9 @@
 
         // store the users language preference in a cookie
         $translateProvider.useLocalStorage();
+
+
+        //$translateProvider.preferredLanguage('en');
+
     }
 })();

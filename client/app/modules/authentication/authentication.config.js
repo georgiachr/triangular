@@ -12,12 +12,12 @@
     /* @ngInject */
     function moduleConfig($translatePartialLoaderProvider, $stateProvider, triMenuProvider) {
 
-        $translatePartialLoaderProvider.addPart('app/il8n/authentication');
+        //creates the {part}
+        $translatePartialLoaderProvider.addPart('app/modules/authentication');//finds the il8n inside the path by default
 
         $stateProvider
             .state('authentication', { //NOT USED
                 abstract: true,
-                //templateUrl: 'templates/components/authentication/authentication.tmpl.html',
                 controller: 'AuthenticationController'
             })
             .state('authentication-home', {
@@ -26,6 +26,24 @@
             })
             .state('authentication-logout', {
                 controller: 'LogoutController',
+                controllerAs: 'vm'
+            })
+            .state('authentication-reset', {
+                abstract: true,
+                //templateUrl: 'templates/components/authentication/reset-email.tmpl.html',
+                controller: 'ResetPasswordController',
+                controllerAs: 'vm'
+            })
+            .state('authentication-reset-password', {
+                templateUrl: 'templates/components/authentication/reset-password.tmpl.html',
+                controller: 'ResetPasswordChangeController',
+                //params: ['token','userid'], or
+                params:      {'token': null, 'userid': null},
+                controllerAs: 'vm'
+            })
+            .state('authentication-reset-email', {
+                templateUrl: 'templates/components/authentication/reset-email.tmpl.html',
+                controller: 'ResetPasswordWithTokenController',
                 controllerAs: 'vm'
             })
             .state('dashboard.admin.profile', {
