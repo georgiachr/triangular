@@ -1,12 +1,14 @@
-//TODO: change title to role
 /**
  * Created by georgia.chr on 21-Sep-15.
+ * Verifies that user's role is 'Administrator'. isTokenAuthorized is a prereq. for this policy.
+ * Request has the user object and this module uses request's user role to identify the user's role
+ * (from database record)
  *
- * @module isAdmin
+ * @module isUserAdmin
+ * @version 1.0.0
  * @param req
  * @param res
  * @param next
- * @returns {*}
  */
 module.exports = function (req, res, next) {
 

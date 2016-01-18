@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/videos/controllers/ListVideosController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: modules/videos/controllers/ListVideosController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Created by georgia.chr on 04-Jan-16.
+ */
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.module.videos')
+        .controller('ListVideosController', ListVideosController);
+
+    /* @ngInject */
+    function ListVideosController($scope, $http, useridentity) {
+
+        var vm = this;
+
+        $scope.useridentity = useridentity;
+
+        vm.videoList = [];
+        vm.selected = [];
+
+        //Pagination variables
+        vm.pagination = {
+            numberOfItemsByPage: 4, //limit is the maximum number of items by page
+            getListStartIndex: 0,
+            pagesToShow: 0,
+            totalItems: 0,
+            totalPages: 0,
+            currentPage: 1, //by default
+            maxNumberOfPages: 10
+        };
+
+
+        /*$timeout(function() {
+         $rootScope.$broadcast('newMailNotification');
+         $mdToast.show({
+         template: '&lt;md-toast>&lt;span flex>You have new email messages! View them &lt;a href="" ng-click=vm.viewUnread()>here&lt;/a>&lt;/span>&lt;/md-toast>',
+         controller: newMailNotificationController,
+         controllerAs: 'vm',
+         position: 'bottom right',
+         hideDelay: 5000
+         });
+         }, 10000);
+         */
+
+        //////////////
+
+        /*function newMailNotificationController() {
+         var vm = this;
+         vm.viewUnread = function() {
+         $state.go('admin-panel-email-no-scroll.email.inbox');
+         };
+         }*/
+
+        vm.getVideoListRequest = getVideoListRequest;
+        vm.pageRequested = pageRequested;
+        vm.calculateTotalNumberOfPagesForPagination = calculateTotalNumberOfPagesForPagination;
+
+        vm.pageRequested();
+
+        /**
+         * When a button from pagination is clicked (next or previous page)
+         */
+        function pageRequested (){
+
+            var request;
+
+            //calculate pagination start index for the page requested
+            vm.pagination.getListStartIndex = ((vm.pagination.currentPage - 1) * vm.pagination.numberOfItemsByPage) + 1 ;
+
+            //prepare request
+            var request = {
+                method: 'GET',
+                url: '/videolist',
+                params: {
+                    requestedUserRole: $scope.useridentity.userRole,
+                    skip: vm.pagination.getListStartIndex,
+                    limit: vm.pagination.numberOfItemsByPage
+                }
+            };
+
+
+            //get user list using AJAX call
+            vm.getVideoListRequest(request);
+
+        };
+
+        function calculateTotalNumberOfPagesForPagination (numberOfTotalItemsRetrievedFromDb){
+
+            vm.pagination.totalPages = Math.ceil(numberOfTotalItemsRetrievedFromDb / vm.pagination.numberOfItemsByPage);
+            vm.pagination.totalItems = numberOfTotalItemsRetrievedFromDb;
+
+        };
+
+        function getVideoListRequest (request){
+
+            $http(request)
+                .success(function(responseData) {
+                    // 'data' is GET-declared by default.
+                    //var dataReceived = angular.fromJson(responseData['data']);
+                    var dataReceived = angular.fromJson(responseData);
+
+                    //console.log('dataReceived: '+JSON.stringify(responseData));
+                    //initialize variables from server response
+                    vm.videoList = dataReceived['videoList'];
+                    vm.pagination.totalItems = dataReceived['totalVideoCount'];
+
+                    vm.calculateTotalNumberOfPagesForPagination(vm.pagination.totalItems);
+
+                })
+                .error(function(data, status, headers, config) {
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+
+                });
+        }
+
+    }
+    ListVideosController.$inject = ['$scope', '$http', 'useridentity'];
+})();
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-hi.html">hi</a></li></ul><h3>Classes</h3><ul><li><a href="-_anonymous_-SailsIOClient-JWR.html">JWR</a></li><li><a href="-_anonymous_-SailsIOClient-SailsSocket.html">SailsSocket</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getCookie">getCookie</a></li><li><a href="global.html#setHttpHeaders">setHttpHeaders</a></li><li><a href="global.html#setWebSocketHeaders">setWebSocketHeaders</a></li><li><a href="global.html#triAngular">triAngular</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jan 18 2016 10:01:24 GMT+0200 (GTB Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -2,7 +2,8 @@
  * User.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
- * @docs        :: http://sailsjs.org/#!documentation/models
+ * @version 1.0.0
+ * @author Georgia Christodoulou
  */
 
 
@@ -58,16 +59,11 @@ module.exports = {
     },
 
     // The token
-      //TODO: 1-N association - A user may have many tokens
+    //TODO: 1-N association - A user may have many tokens
     token: {
       type: 'string'
         //collection: 'token'
         //via: ''
-    },
-
-    // The salt used for user's password
-    passwordSalt: {
-      type: 'string'
     },
 
     lastActive: {
@@ -85,7 +81,7 @@ module.exports = {
     },
 
 
-    //unused attributes for this model
+    //UNUSED attributes for this model
     admin: {
       type: 'boolean',
       defaultsTo: false
@@ -97,10 +93,9 @@ module.exports = {
       type: 'string'
     },
     avatar:{
-      model: 'filemodel'
+      model: 'filemodel' /*can't be file as a model name*/
       //TODO: defaultsTo:
     }
-
       //    cars:{
 //      collection: 'car',
 //      via: 'owner'

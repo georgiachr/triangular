@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/authentication/controllers/LoginController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: modules/authentication/controllers/LoginController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Created by georgia.chr on 08-Dec-15.
+ */
+
+/**
+ * LoginController is called only when no token is found.
+ * It forces user to log in using a valid username(email) and a password.
+ */
+(function() {
+    'use strict';
+
+    angular
+        .module('app.module.authentication')
+        .controller('LoginController',LoginController);
+
+    /* @ngInject */
+    function LoginController($scope,$state, triSettings, useridentity, $http, $mdToast) {
+        var vm = this;
+
+        console.log('LoginController called!');
+
+        //use $scope for services
+        $scope.useridentity = useridentity;
+        vm.loginStatus=false;
+
+        //functions
+        vm.loginClick = loginClick;
+        vm.changeStates = changeStates;
+        vm.userLoginRequest = userLoginRequest;
+
+        vm.triSettings = triSettings;
+
+        // initialize (create blank user variable for login form)
+        vm.user = {
+            email: '',
+            password: ''
+        };
+
+        ////////////////
+
+        /**
+         * Click login button
+         */
+        function loginClick()
+        {
+            if (!$scope.useridentity.getUserStatus())
+                vm.userLoginRequest();
+        }
+
+
+        /**
+         * Only for users that don't have a stored cookie
+         * User's email and password are required fields.
+         *
+         */
+        function userLoginRequest (){
+
+            vm.loginStatus=false;
+
+            $http.put('/login', {
+                email: vm.user.email,
+                password: vm.user.password
+            })
+            .then(function onSuccess (responseData) {
+
+                var data = angular.fromJson(responseData)['data'];
+
+                //Store user info into the useridentity service
+                $scope.useridentity.loginUser(data);
+
+                //User is now authenticated!
+                //Therefore, change state based on user role
+                //TODO: regular expression to user.HOME
+                vm.changeStates($scope.useridentity.getUserRole());
+
+            })
+            //catch any error even errors inside then (besides $http errors)
+            .catch(function onError(sailsResponse) {
+
+                //User email or password incorrect
+                if(sailsResponse.status == 404)
+                {
+                    vm.loginStatus=true;
+                    showToastMessage('Wrong username or password! Try again.' + vm.loginStatus);
+                }
+
+            })
+            .finally(function eitherWay(){
+
+            });
+        }
+
+
+        function changeStates (userRole){
+            if(userRole === "Administrator"){
+                $state.go('dashboard.admin.users-list');
+            }
+        }
+
+        function showToastMessage(message){
+            $mdToast.show(
+                $mdToast.simple()
+                    //.content($filter('translate')('MESSAGES.LANGUAGE_CHANGED'))
+                    .content(message)
+                    .position('bottom right')
+                    .hideDelay(500)
+            );
+        }
+
+        /*$scope.$watch('useridentity.userRole', function(){
+
+            if (useridentity.userRole == 'Administrator') {
+                $state.go('dashboard.admin.users-list');
+            }
+            else {
+                $state.go('authenticationlogin');
+            }
+
+        }, true);*/
+
+    }
+
+    LoginController.$inject = ['$scope','$state','triSettings','useridentity','$http','$mdToast'];
+})();</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-hi.html">hi</a></li></ul><h3>Classes</h3><ul><li><a href="-_anonymous_-SailsIOClient-JWR.html">JWR</a></li><li><a href="-_anonymous_-SailsIOClient-SailsSocket.html">SailsSocket</a></li></ul><h3>Global</h3><ul><li><a href="global.html#getCookie">getCookie</a></li><li><a href="global.html#setHttpHeaders">setHttpHeaders</a></li><li><a href="global.html#setWebSocketHeaders">setWebSocketHeaders</a></li><li><a href="global.html#triAngular">triAngular</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jan 18 2016 10:01:24 GMT+0200 (GTB Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -102,8 +102,7 @@
 
 
 <div class="description">
-    Created by georgia.chr on 14-Sep-15.
- This service handles the encode / decode (this JWT implementation calls those methods sign and verify respectively)
+    Created by georgia.chr on 14-Sep-15. This service handles the encode / decode of application's tokens (calls jsonwebtoken's methods sign and verify respectively) The user token of this application is comprised of: 1. payload which is user's id (key is 'userid'). Payload has expiration time. 2. tokenSalt declared in globals.js 3. data in a json (for example: expirationInMinute which is also declared in globals.js)
 </div>
 
 
@@ -115,7 +114,8 @@
 <dl class="details">
 
     
-
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>1.0.0</li></ul></dd>
     
 
     
@@ -130,6 +130,15 @@
 
     
 
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Georgia Christodoulou</li>
+        </ul>
+    </dd>
     
 
     
@@ -141,7 +150,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_jwtToken.js.html">services/jwtToken.js</a>, <a href="services_jwtToken.js.html#line8">line 8</a>
+        <a href="services_jwtToken.js.html">services/jwtToken.js</a>, <a href="services_jwtToken.js.html#line14">line 14</a>
     </li></ul></dd>
     
 
@@ -165,7 +174,7 @@
 
 
 <div class="description">
-    Created by georgia.chr on 14-Jan-16.
+    This service handles the application's password encryption and comparison using bcrypt.passwordSaltLength should be defined in globals.js. passwordSaltLength defines salt length.
 </div>
 
 
@@ -177,7 +186,8 @@
 <dl class="details">
 
     
-
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>1.0.0</li></ul></dd>
     
 
     
@@ -192,6 +202,15 @@
 
     
 
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Georgia Christodoulou</li>
+        </ul>
+    </dd>
     
 
     
@@ -203,7 +222,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_bcryptPassword.js.html">services/bcryptPassword.js</a>, <a href="services_bcryptPassword.js.html#line6">line 6</a>
+        <a href="services_bcryptPassword.js.html">services/bcryptPassword.js</a>, <a href="services_bcryptPassword.js.html#line12">line 12</a>
     </li></ul></dd>
     
 
@@ -221,7 +240,7 @@
 
         
             
-<h4 class="name" id="PNG"><span class="type-signature"></span>PNG<span class="type-signature"></span></h4>
+<h4 class="name" id="Q"><span class="type-signature"></span>Q<span class="type-signature"></span></h4>
 
 
 
@@ -239,7 +258,8 @@
 <dl class="details">
 
     
-
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>1.0.0</li></ul></dd>
     
 
     
@@ -254,6 +274,15 @@
 
     
 
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Georgia Christodoulou</li>
+        </ul>
+    </dd>
     
 
     
@@ -265,7 +294,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controllers_UserController.js.html">controllers/UserController.js</a>, <a href="controllers_UserController.js.html#line10">line 10</a>
+        <a href="controllers_UserController.js.html">controllers/UserController.js</a>, <a href="controllers_UserController.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -301,7 +330,8 @@
 <dl class="details">
 
     
-
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>1.0.0</li></ul></dd>
     
 
     
@@ -316,6 +346,15 @@
 
     
 
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>Georgia Christodoulou</li>
+        </ul>
+    </dd>
     
 
     
@@ -327,7 +366,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controllers_VideoController.js.html">controllers/VideoController.js</a>, <a href="controllers_VideoController.js.html#line8">line 8</a>
+        <a href="controllers_VideoController.js.html">controllers/VideoController.js</a>, <a href="controllers_VideoController.js.html#line12">line 12</a>
     </li></ul></dd>
     
 
@@ -335,6 +374,13 @@
 
     
 
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>implement videoList with WebSockets</li>
+        </ul>
+    </dd>
     
 </dl>
 
@@ -354,12 +400,15 @@
 
     
 
-    <h4 class="name" id="decodeToken"><span class="type-signature"></span>decodeToken<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="comparePasswords"><span class="type-signature"></span>comparePasswords<span class="signature">(passwordTocheck, passwordFromDb)</span><span class="type-signature"> &rarr; {*}</span></h4>
 
     
 
 
 
+<div class="description">
+    PROMISABLE methodWe use bcrypt's Synchronous functions to compare two passwords.In the end, we use Q.fcall() to create a promise for this task.
+</div>
 
 
 
@@ -369,81 +418,76 @@
 
 
 
-
-
-
-<dl class="details">
-
+    <h5>Parameters:</h5>
     
 
-    
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_jwtToken.js.html">services/jwtToken.js</a>, <a href="services_jwtToken.js.html#line58">line 58</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        <th>Type</th>
 
         
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>passwordTocheck</code></td>
             
 
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">password given as input from user.</td>
+        </tr>
+
     
 
-    <h4 class="name" id="encryptPassword"><span class="type-signature"></span>encryptPassword<span class="signature">()</span><span class="type-signature"> &rarr; {*}</span></h4>
+        <tr>
+            
+                <td class="name"><code>passwordFromDb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">password stored in user's database record.</td>
+        </tr>
 
     
-
-
-
-
-
-
-
-
-
+    </tbody>
+</table>
 
 
 
@@ -479,7 +523,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_bcryptPassword.js.html">services/bcryptPassword.js</a>, <a href="services_bcryptPassword.js.html#line13">line 13</a>
+        <a href="services_bcryptPassword.js.html">services/bcryptPassword.js</a>, <a href="services_bcryptPassword.js.html#line38">line 38</a>
     </li></ul></dd>
     
 
@@ -528,14 +572,14 @@
 
     
 
-    <h4 class="name" id="encryptPasswordSync"><span class="type-signature"></span>encryptPasswordSync<span class="signature">(password)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="decodeToken"><span class="type-signature"></span>decodeToken<span class="signature">(token, options)</span><span class="type-signature"> &rarr; {Object}</span></h4>
 
     
 
 
 
 <div class="description">
-    Salt is added by default
+    Synchronous method (using jwt.decode).Returns the decoded payload and header (if options complete is true).Then access payload by decoded.payload.
 </div>
 
 
@@ -571,10 +615,15 @@
 
         <tr>
             
-                <td class="name"><code>password</code></td>
+                <td class="name"><code>token</code></td>
             
 
             <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
             
             </td>
 
@@ -582,7 +631,30 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">the token to be decoded</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">{complete: true}</td>
         </tr>
 
     
@@ -623,7 +695,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_bcryptPassword.js.html">services/bcryptPassword.js</a>, <a href="services_bcryptPassword.js.html#line31">line 31</a>
+        <a href="services_jwtToken.js.html">services/jwtToken.js</a>, <a href="services_jwtToken.js.html#line79">line 79</a>
     </li></ul></dd>
     
 
@@ -646,6 +718,177 @@
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    decoded - object with decoded payload and header
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="encryptPassword"><span class="type-signature"></span>encryptPassword<span class="signature">(passwordToBeEncrypted)</span><span class="type-signature"> &rarr; {*}</span></h4>
+
+    
+
+
+
+<div class="description">
+    PROMISABLE methodWe use bcrypt's Synchronous functions to generate and hash the 'passwordToBeEncrypted'.In the end, we use Q.fcall() to create a promise for these tasks.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>passwordToBeEncrypted</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">password from user that has to be encrypted</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_bcryptPassword.js.html">services/bcryptPassword.js</a>, <a href="services_bcryptPassword.js.html#line22">line 22</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -661,9 +904,7 @@
 
 
 <div class="description">
-    INCORRECT password:
-If the password from the form parameters doesn't match
-the encrypted password from the database returns notFound response (404)
+    INCORRECT password:If the password from the form parameters doesn't matchthe encrypted password from the database returns notFound response (404)
 </div>
 
 
@@ -707,7 +948,7 @@ the encrypted password from the database returns notFound response (404)
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controllers_UserController.js.html">controllers/UserController.js</a>, <a href="controllers_UserController.js.html#line129">line 129</a>
+        <a href="controllers_UserController.js.html">controllers/UserController.js</a>, <a href="controllers_UserController.js.html#line133">line 133</a>
     </li></ul></dd>
     
 
@@ -742,6 +983,168 @@ the encrypted password from the database returns notFound response (404)
     <dd>
         
 <span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="issueToken"><span class="type-signature"></span>issueToken<span class="signature">(payload)</span><span class="type-signature"> &rarr; {String}</span></h4>
+
+    
+    <p class="summary">Creates a token based on userid</p>
+    
+
+
+
+<div class="description">
+    Synchronous method (using jwt.sign).Create an expiration date/time for the new token. Then amend the new expiration time into the payload.Finally creates a new token that comprised of a. payload (userid), b. tokenSalt (define in globals) and c. other datalike expirationInMinutes.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>payload</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">payload is the user's id. The key is 'userid'</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_jwtToken.js.html">services/jwtToken.js</a>, <a href="services_jwtToken.js.html#line27">line 27</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>Use sails.config.globals to set TIME, TIME TO LEAVE, NEAR TIME TO EXPIRE</li>
+        </ul>
+    </dd>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    token
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">String</span>
 
 
     </dd>
@@ -1047,7 +1450,7 @@ the encrypted password from the database returns notFound response (404)
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="controllers_UserController.js.html">controllers/UserController.js</a>, <a href="controllers_UserController.js.html#line137">line 137</a>
+        <a href="controllers_UserController.js.html">controllers/UserController.js</a>, <a href="controllers_UserController.js.html#line141">line 141</a>
     </li></ul></dd>
     
 
@@ -1078,16 +1481,14 @@ the encrypted password from the database returns notFound response (404)
 
     
 
-    <h4 class="name" id="tokenExpiresInMinutes"><span class="type-signature"></span>tokenExpiresInMinutes<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="tokenExpiresInMinutes"><span class="type-signature"></span>tokenExpiresInMinutes<span class="signature">(token)</span><span class="type-signature"> &rarr; {Number}</span></h4>
 
     
 
 
 
 <div class="description">
-    If returns a negative value then the token is invalid
-else
-return value is the number of minutes until expiration
+    Synchronous method.Returns a negative value if the token is invalid or a positive value if token is valid.The value is the number of minutes until expiration.
 </div>
 
 
@@ -1096,6 +1497,55 @@ return value is the number of minutes until expiration
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>token</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the token</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -1131,7 +1581,7 @@ return value is the number of minutes until expiration
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="services_jwtToken.js.html">services/jwtToken.js</a>, <a href="services_jwtToken.js.html#line72">line 72</a>
+        <a href="services_jwtToken.js.html">services/jwtToken.js</a>, <a href="services_jwtToken.js.html#line98">line 98</a>
     </li></ul></dd>
     
 
@@ -1154,6 +1604,28 @@ return value is the number of minutes until expiration
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    isexpired - a positive or negative value
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Number</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1326,6 +1798,182 @@ return value is the number of minutes until expiration
 
     
 
+    <h4 class="name" id="verifyToken"><span class="type-signature"></span>verifyToken<span class="signature">(token, callback)</span><span class="type-signature"> &rarr; {*}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Asynchronous method (using jwt.verifyToken).
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>token</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the token to be verified</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="services_jwtToken.js.html">services/jwtToken.js</a>, <a href="services_jwtToken.js.html#line58">line 58</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>Use NEAR TIME TO EXPIRE to re-issue the token</li>
+        
+            <li>(and optionally expiration, audience, issuer)</li>
+        </ul>
+    </dd>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">*</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="videoList"><span class="type-signature"></span>videoList<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
@@ -1419,13 +2067,13 @@ return value is the number of minutes until expiration
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-AuthControllers.html">AuthControllers</a></li><li><a href="module-FileController.html">FileController</a></li><li><a href="module-isAdmin.html">isAdmin</a></li></ul><h3>Global</h3><ul><li><a href="global.html#decodeToken">decodeToken</a></li><li><a href="global.html#encryptPassword">encryptPassword</a></li><li><a href="global.html#encryptPasswordSync">encryptPasswordSync</a></li><li><a href="global.html#incorrect">incorrect</a></li><li><a href="global.html#jwt">jwt</a></li><li><a href="global.html#Passwords">Passwords</a></li><li><a href="global.html#PNG">PNG</a></li><li><a href="global.html#prepareUserList">prepareUserList</a></li><li><a href="global.html#prepareVideoList">prepareVideoList</a></li><li><a href="global.html#Q">Q</a></li><li><a href="global.html#success">success</a></li><li><a href="global.html#tokenExpiresInMinutes">tokenExpiresInMinutes</a></li><li><a href="global.html#userListRequestValidation">userListRequestValidation</a></li><li><a href="global.html#validateNewUserFields">validateNewUserFields</a></li><li><a href="global.html#videoList">videoList</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-AuthControllers.html">AuthControllers</a></li><li><a href="module-FileController.html">FileController</a></li><li><a href="module-isUserAdmin.html">isUserAdmin</a></li></ul><h3>Global</h3><ul><li><a href="global.html#comparePasswords">comparePasswords</a></li><li><a href="global.html#decodeToken">decodeToken</a></li><li><a href="global.html#encryptPassword">encryptPassword</a></li><li><a href="global.html#incorrect">incorrect</a></li><li><a href="global.html#issueToken">issueToken</a></li><li><a href="global.html#jwt">jwt</a></li><li><a href="global.html#Passwords">Passwords</a></li><li><a href="global.html#prepareUserList">prepareUserList</a></li><li><a href="global.html#prepareVideoList">prepareVideoList</a></li><li><a href="global.html#Q">Q</a></li><li><a href="global.html#success">success</a></li><li><a href="global.html#tokenExpiresInMinutes">tokenExpiresInMinutes</a></li><li><a href="global.html#userListRequestValidation">userListRequestValidation</a></li><li><a href="global.html#validateNewUserFields">validateNewUserFields</a></li><li><a href="global.html#verifyToken">verifyToken</a></li><li><a href="global.html#videoList">videoList</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Jan 15 2016 15:55:58 GMT+0200 (GTB Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Mon Jan 18 2016 10:01:21 GMT+0200 (GTB Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

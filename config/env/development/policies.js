@@ -16,35 +16,27 @@
 
 module.exports.policies = {
 
-  // Default policy for all controllers and actions
-  // (`true` allows public access)
-  //'*': true
-    // isTokenAuthorized for everytng else
+    // Default policy for all controllers and actions
+    // (`true` allows public access)
+    //'*': true
+    //'*': ['isTokenAuthorized'], // Everything restricted here
 
-  //'*': ['isTokenAuthorized'], // Everything resctricted here
-  //
-  'UserController': {
-      '*': true,
-      'login': true, // We do not need authorization here, allowing public access
-      'logout': ['isTokenAuthorized'],
-      'loginExistedUser': 'isTokenAuthorized',
-      'userList': ['isTokenAuthorized','isUserAdmin'],
-      'addUser': ['isTokenAuthorized'],
-      'removeUser': ['isTokenAuthorized','isUserAdmin'],
-      'updateUser': ['isTokenAuthorized','isUserAdmin'],
-      'initiateResetPassword': true,
-      'changePassword': true,
 
-      'test': true
-      //'validateUser': ['isTokenAuthorized']
-      //  'addUser': ['isAdmin'],
-      //  'userList': ['isAdmin'],
-      //  'updateUser': ['isAdmin'],
-      //  'destroy': ['isAdmin']
-  },
-  'VideoController': {
-      '*': true,
-      'videoList': ['isTokenAuthorized','isUserAdmin']
-  }
+    'UserController': {
+        '*': true,
+        'login': true, // We do not need authorization here, allowing public access
+        'logout': ['isTokenAuthorized'],
+        'loginExistedUser': 'isTokenAuthorized',
+        'userList': ['isTokenAuthorized', 'isUserAdmin'],
+        'addUser': ['isTokenAuthorized'],
+        'removeUser': ['isTokenAuthorized', 'isUserAdmin'],
+        'updateUser': ['isTokenAuthorized', 'isUserAdmin'],
+        'initiateResetPassword': true,
+        'changePassword': true
+    },
+    'VideoController': {
+        '*': true,
+        'videoList': ['isTokenAuthorized', 'isUserAdmin']
+    }
 
 };

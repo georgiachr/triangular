@@ -3,20 +3,20 @@
  *
  * @description :: Server-side logic for managing Users
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- *
+ * @require module:q
+ * @version 1.0.0
+ * @author Georgia Christodoulou
  */
 
-//sleep = require('sleep');
-var PNG = require("pngjs-image");
-var fs = require("fs");
 var Q = require('q');
 
 module.exports = {
 
     /**
+     * Removes a user from the database based on user id.
      *
-     * @param req
-     * @param res
+     * @param {Object} req - request object has userid to be deleted.
+     * @param {Object} res - response object
      * @returns {*}
      */
     removeUser: function (req, res) {
@@ -34,7 +34,7 @@ module.exports = {
             .then(function (usersDestroyed){
 
                 User.publishDestroy(usersDestroyed[0].id);
-                sails.log.info(usersDestroyed[0].id);
+                //sails.log.info(usersDestroyed[0].id);
 
                 return res.ok();
             })
@@ -75,8 +75,12 @@ module.exports = {
   },
 
     /**
-     * Check
-     * Mandatory Policies:
+     * Login user into the application. Finds user having the requested email and then checks the passwords. If match then
+     * create a new token for the user.
+     *
+     * @todo use PROMISES instead of callbacks.
+     * @todo use bcryptPassword to check passwords
+     * @todo create onlineUsers room
      * @param req email password
      * @param res
      * @returns {*}
@@ -170,57 +174,54 @@ module.exports = {
   },
 
 
-  /**OK
-   * Log out
-   * (wipes `me` from the session)
-   */
+/**
+ * Logout user from application. If user found then update their token to "".
+ *
+ * @todo use PROMISES instead of callbacks
+ * @param {Object} req - has the user id
+ * @param {Object} res -
+ * @returns {*}
+ */
   logout: function (req, res) {
-
-    sails.log.info("Logout API");
 
     var header_token = null;
 
-    if (req.headers) {
+    User.findOne({
+        id: req.param('id')
+    }, function foundUser(err, user) {
 
-        if (header_token === undefined) {
-            return res.json(401, {err: 'No Authorization header was found'});
+        if (err) {
+            sails.log.info("Logout: Error find user!");
+            return res.negotiate(err);
         }
-        else {
 
-            User.findOne({
-               id: req.param('id')
-            }, function foundUser(err, user) {
+        if (user) {
 
-              if (err) {
-                sails.log.info("Logout: Error find user!");
-                return res.negotiate(err);
-              }
+            User.update(user.id, {token: ""}, function (err, updated) {
+                if (err) return res.negotiate(err);
 
-              if (user) {
+                if (updated) {
+                    res.json(200);
+                }
+            });
 
-                User.update(user.id, {token: ""},function (err, updated) {
-                      if (err) return res.negotiate(err);
+        }
+        else { //user not found
+            sails.log.info("Logout: User not found!");
+            return res.notFound();
+        }
 
-                      if (updated) {
-                        res.json(200);
-                      }
-                });
+    });
 
-              }
-              else { //user not found
-                sails.log.info("Logout: User not found!");
-                return res.notFound();
-              }
-
-            }); //User.findOne
-          }
-      }
   },
 
     /**
+     * Returns a user list based on skip and limit values (from request object). This method also returns total number of users
+     * found in the database.
      *
-     * @param req
-     * @param res
+     * @todo add code for web sockets
+     * @param {Object} req - the request object
+     * @param {Object} res - the response object
      */
     userList: function (req, res) {
 
@@ -284,7 +285,7 @@ module.exports = {
     },
 
 
-  /** OK
+  /**
    * Update a user account.
    * Update only user's name and user's email
    * updateuser action's policies: isTokenAuthorized, isUserTokenValid, isAdmin
@@ -347,13 +348,14 @@ module.exports = {
   },
 
     /**
-     *
      * Create a new user and add user in the database.
      * This function is developed using Q promises. First it requests an encrypted password for user's password.
      * If the promise is fulfilled then call the User.create promise to create the user.
      * Mandatory Policies: isTokenAuthorized, isUserAdmin
-     * @param req new user's email and password
-     * @param res
+     *
+     * @todo add code for web sockets
+     * @param {Object} req - new user's email and password
+     * @param {Object} res - response object
      */
     addUser: function(req, res) {
 
@@ -395,6 +397,16 @@ module.exports = {
             });
     },
 
+    /**
+     * Changes user's password. First, encrypts the new password and then search for user (based on token).
+     * Request has user's temporary token. If this match token in the database then issue and save a new token.
+     * Then, save the encrypted password in the user's record.
+     *
+     * @todo add code for web sockets
+     * @param {Object} req - the request object (has password,userid and token)
+     * @param {Object} res - the response object
+     * @returns {*}
+     */
     changePassword: function changePassword(req,res) {
 
         /**
@@ -421,7 +433,7 @@ module.exports = {
             })
             .then(function(user){
 
-                sails.log.info('user id found based on token  = ' + user.id);
+                //sails.log.info('user id found based on token  = ' + user.id);
 
                 //issue a new token
                 var newToken = jwtToken.issueToken({userid: user.id});
@@ -447,10 +459,18 @@ module.exports = {
             .done(function(){
 
             });
-
-
     },
 
+    /**
+     * If user's email exists then issue a temporary token for that user. Store that token into the database. Then notify user
+     * for his temporary token.
+     *
+     * @todo add code for web sockets
+     * @todo token should be short time valid
+     * @param {Object} req - request object
+     * @param {Object} res - response object
+     * @returns {*}
+     */
     initiateResetPassword: function initiateResetPassword(req,res){
 
         /**
@@ -478,14 +498,14 @@ module.exports = {
                 //2. set limit time
                 var newToken =  jwtToken.issueToken({userid: userFound.id});
 
-                sails.log.info("newToken = "+newToken);
+                //sails.log.info("newToken = "+newToken);
 
                 return User.updateUserByAttr(userFound.id,{token:newToken});
             })
             .then(function(userUpdated){
 
-                sails.log.info("user's id is = "+userUpdated[0].id);
-                sails.log.info("user's updated token is = "+userUpdated[0].token);
+                //sails.log.info("user's id is = "+userUpdated[0].id);
+                //sails.log.info("user's updated token is = "+userUpdated[0].token);
 
                 return res.json(200,
                        {

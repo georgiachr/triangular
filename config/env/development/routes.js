@@ -23,25 +23,28 @@
 module.exports.routes = {
 
 
-  // If a request to a URL doesn't match any of the custom routes above,
-  // it is matched against Sails route blueprints.  See `config/blueprints.js`
-  // for configuration options and examples.
-  'PUT /login': 'UserController.login',
-  'PUT /loginExistedUser': 'UserController.loginExistedUser',
-  //'PUT /test': 'UserController.test',
-  'POST /logout': 'UserController.logout',
-  'POST /adduser': 'UserController.addUser',
-  'POST /updateuser': 'UserController.updateuser',
-  'DELETE /removeuser': 'UserController.removeUser',
-  //'POST /uploadavatar': 'FileController.uploadavatar',
+    // If a request to a URL doesn't match any of the custom routes above,
+    // it is matched against Sails route blueprints.  See `config/blueprints.js` for configuration options and examples.
 
-  'GET /userlist': 'UserController.userlist',
+    //USER module
+    'PUT /login': 'UserController.login',
+    'PUT /loginExistedUser': 'UserController.loginExistedUser',
+    'POST /logout': 'UserController.logout',
+    'POST /adduser': 'UserController.addUser',
+    'POST /updateuser': 'UserController.updateUser',
+    'DELETE /removeuser': 'UserController.removeUser',
+    'GET /userlist': 'UserController.userlist',
+    'POST /resetpasswordwithtoken': 'UserController.initiateResetPassword',
+    'POST /changepassword': 'UserController.changePassword',
 
-  'GET /videolist': 'VideoController.videolist',
-  'GET /sockettest': 'VideoController.testingSockets',
-  'GET /enterroom': 'VideoController.enterRoom',
-  'POST /resetpasswordwithtoken': 'UserController.initiateResetPassword',
-  'POST /changepassword': 'UserController.changePassword'
+    //VIDEO module
+    'GET /videolist': 'VideoController.videoList'
+
+    //OTHER routes
+    /*'GET /sockettest': 'VideoController.testingSockets',
+     'GET /enterroom': 'VideoController.enterRoom',*/
+
+
 
 
 };
